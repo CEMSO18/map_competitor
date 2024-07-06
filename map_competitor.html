@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carte de France avec adresses</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <style>
+        #map {
+            height: 600px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <script>
+        // Initialisation de la carte
+        var map = L.map('map').setView([46.603354, 1.888334], 6); // Centre de la France
+
+        // Ajout des tuiles OpenStreetMap
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Liste des adresses avec coordonnées géographiques
+        var addresses = [
+		{lat: 48.8493 ,long: 2.33 , name: VARIANTES},
+		{lat: 48.9482 ,long: 2.1917 , name: LE GOBELIN},
+		{lat: 48.8493 ,long: 2.33 , name: LA PLANETE DESSIN},
+		{lat: 48.892 ,long: 2.2067 , name: MONSIEUR YANIR ZENOU},
+		{lat: 48.8412 ,long: 2.3003 , name: UCHRONIES GAMES},
+		{lat: 48.8846 ,long: 2.2697 , name: JUDAIC STORE},
+		{lat: 48.9216 ,long: 2.1926 , name: LA PLUME D'OR ET D'ARGENT},
+		{lat: 48.8057 ,long: 2.1886 , name: PUBIZ GAMES},
+		{lat: 48.929 ,long: 2.0495 , name: TOFOPOLIS},
+		{lat: 48.9266843 ,long: 2.2944939 , name: MADAME SANDRINE MAURY},
+		{lat: 48.8898 ,long: 2.1586 , name: CLEMOD},
+		{lat: 48.9194 ,long: 2.2748 , name: REUSSITE CRITIQUE},
+		{lat: 48.8412 ,long: 2.3003 , name: MONSIEUR GUILLAUME MOULUN},
+		{lat: 48.8925 ,long: 2.3444 , name: SASU GNIARK},
+		{lat: 48.9526 ,long: 2.1452 , name: MONSIEUR YOLAN BENJAMIN BOURGADE},
+		{lat: 48.8835 ,long: 2.3219 , name: LEBARBU},
+		{lat: 48.8967 ,long: 2.2567 , name: KHADO KOURBEVOIE}
+        ];
+
+        // Ajout des marqueurs pour chaque adresse
+        addresses.forEach(function(address) {
+            L.marker([address.lat, address.lon]).addTo(map)
+                .bindPopup(address.name)
+                .openPopup();
+        });
+    </script>
+</body>
+</html>
