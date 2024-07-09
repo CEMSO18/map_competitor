@@ -81,11 +81,14 @@ foreach ($addresses as $address) {
             padding: 10px;
             text-align: left;
         }
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+        }
         .dropdown {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            z-index: 1000;
+            position: relative;
+            margin-right: 20px;
         }
         .dropdown-content {
             display: none;
@@ -109,15 +112,21 @@ foreach ($addresses as $address) {
         .dropdown-content button:hover {
             background-color: #f1f1f1;
         }
+        .title {
+            font-size: 24px;
+        }
     </style>
 </head>
 <body>
-    <div class="dropdown">
-        <button onclick="toggleDropdown()">Menu</button>
-        <div id="dropdown-content" class="dropdown-content">
-            <button onclick="showMap()">Afficher la carte</button>
-            <button onclick="showTable()">Afficher le tableau</button>
+    <div class="header">
+        <div class="dropdown">
+            <button onclick="toggleDropdown()">Menu</button>
+            <div id="dropdown-content" class="dropdown-content">
+                <button onclick="showMap()">Afficher la carte</button>
+                <button onclick="showTable()">Afficher le tableau</button>
+            </div>
         </div>
+        <div class="title">Magasin concurrent en vente de jeux de sociétés</div>
     </div>
     <h1>Geolocation Results</h1>
     <div id="map"></div>
