@@ -88,8 +88,8 @@
         <label for="boardGameCheckbox">Bord Game</label>
         <input type="checkbox" id="vapeStoreCheckbox" checked>
         <label for="vapeStoreCheckbox">Vape Store</label>
-        <input type="checkbox" id="lionIconCheckbox" checked>
-        <label for="lionIconCheckbox">Afficher Lion Icon</label>
+        <input type="checkbox" id="lionCheckbox" checked>
+        <label for="lionCheckbox">Afficher Lion</label>
     </div>
     <div id="table">
         <table>
@@ -133,81 +133,33 @@
         var markers = {
             boardGame: [],
             vapeStore: [],
-            lionIcon: null
+            lion: []
         };
 
-        function toggleDropdown() {
-            var dropdownContent = document.getElementById("dropdown-content");
-            if (dropdownContent.style.display === "none" || dropdownContent.style.display === "") {
-                dropdownContent.style.display = "block";
-            } else {
-                dropdownContent.style.display = "none";
-            }
-        }
-
-        function showMap() {
-            document.getElementById("map").style.display = "block";
-            document.getElementById("table").style.display = "none";
-        }
-
-        function showTable(table) {
-            document.getElementById("map").style.display = "none";
-            document.getElementById("table").style.display = "block";
-
-            fetchData(table)
+        function fetchData(table) {
+            fetch(`fetch_data.php?table=${table}`)
+                .then(response => response.json())
                 .then(data => {
                     if (table === 'societe_info_competitor') {
-                        markers.boardGame.forEach(marker => map.removeLayer(marker));
                         markers.boardGame = addMarkers(data, customIconPurple);
                     } else if (table === 'societe_info_vape_competitor') {
-                        markers.vapeStore.forEach(marker => map.removeLayer(marker));
                         markers.vapeStore = addMarkers(data, customIconRed);
                     }
-                    populateTable(data);
-                    showMarkersOnMap(data);
+                    createTableHeaders(Object.keys(data[0]));
+                    createTableRows(data);
                 })
-                .catch(error => console.error('Error fetching data:', error));
-        }
-
-        function fetchData(table) {
-            return fetch('fetch_data.php?table=' + table)
-                .then(response => response.json())
-                .catch(error => {
-                    console.error('Error fetching data:', error);
-                    return [];
-                });
-        }
-
-        function populateTable(data) {
-            const tableHeaders = document.getElementById('table-headers');
-            tableHeaders.innerHTML = '';
-            const headers = Object.keys(data[0]);
-            headers.forEach(header => {
-                const th = document.createElement('th');
-                th.textContent = header;
-                tableHeaders.appendChild(th);
-            });
-
-            const tableBody = document.getElementById('table-body');
-            tableBody.innerHTML = '';
-            data.forEach(rowData => {
-                const tr = document.createElement('tr');
-                headers.forEach(header => {
-                    const td = document.createElement('td');
-                    td.textContent = rowData[header];
-                    tr.appendChild(td);
-                });
-                tableBody.appendChild(tr);
-            });
+                .catch(error => console.error('Error:', error));
         }
 
         function addMarkers(data, icon) {
-            return data.map(item => {
-                const marker = L.marker([item.lat, item.long], { icon: icon })
+            var markerList = [];
+            data.forEach(function(item) {
+                var marker = L.marker([item.lat, item.long], {icon: icon})
                     .bindPopup(item.name + "<br>" + item.formatted + "<br>" + item.site_web + "<br>" + "CA :" + item.ca_dernier + "€" );
                 marker.addTo(map);
-                return marker;
+                markerList.push(marker);
             });
+            return markerList;
         }
 
         function toggleMarkers(type, show) {
@@ -228,21 +180,61 @@
             toggleMarkers('vapeStore', this.checked);
         });
 
-        document.getElementById('lionIconCheckbox').addEventListener('change', function() {
-            if (this.checked) {
-                if (!markers.lionIcon) {
-                    markers.lionIcon = L.marker([48.897891998291016, 2.0886409282684326], { icon: lionIcon }).addTo(map)
-                        .bindPopup("<b>The Gentlemen Pubs</b><br><img src='images/lions_pub_full.png' alt='Lions Pub' width='100'>");
-                } else {
-                    map.addLayer(markers.lionIcon);
-                }
-            } else {
-                map.removeLayer(markers.lionIcon);
-            }
+        document.getElementById('lionCheckbox').addEventListener('change', function() {
+            toggleMarkers('lion', this.checked);
         });
 
-        // Initial fetch of data for the default view
-        showTable('societe_info_competitor');
+        function toggleDropdown() {
+            var dropdownContent = document.getElementById("dropdown-content");
+            if (dropdownContent.style.display === "none" || dropdownContent.style.display === "") {
+                dropdownContent.style.display = "block";
+            } else {
+                dropdownContent.style.display = "none";
+            }
+        }
+
+        function showMap() {
+            document.getElementById("map").style.display = "block";
+            document.getElementById("table").style.display = "none";
+        }
+
+        function showTable(table) {
+            document.getElementById("map").style.display = "none";
+            document.getElementById("table").style.display = "block";
+            fetchData(table);
+        }
+
+        function createTableHeaders(headers) {
+            const tableHeaders = document.getElementById('table-headers');
+            tableHeaders.innerHTML = '';
+            headers.forEach(header => {
+                const th = document.createElement('th');
+                th.textContent = header;
+                tableHeaders.appendChild(th);
+            });
+        }
+
+        function createTableRows(rows) {
+            const tableBody = document.getElementById('table-body');
+            tableBody.innerHTML = '';
+            rows.forEach(row => {
+                const tr = document.createElement('tr');
+                Object.values(row).forEach(value => {
+                    const td = document.createElement('td');
+                    td.textContent = value;
+                    tr.appendChild(td);
+                });
+                tableBody.appendChild(tr);
+            });
+        }
+
+        // Initial fetch of data
+        fetchData('societe_info_competitor');
+        fetchData('societe_info_vape_competitor');
+
+        // Ajout d'un marqueur rouge pour les coordonnées spécifiques
+        L.marker([48.897891998291016, 2.0886409282684326], {icon: lionIcon}).addTo(map)
+            .bindPopup("<b>The Gentlemen Pubs</b><br><img src='images/lions_pub_full.png' alt='Lions Pub' width='100'>");
     </script>
 </body>
 </html>
