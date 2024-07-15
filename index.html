@@ -10,15 +10,17 @@
         body {
             font-family: Arial, sans-serif;
         }
-        #map, #table {
+        #map {
             height: 600px;
             width: 100%;
         }
-        #map {
-            display: block;
+        #legend {
+            padding: 10px;
         }
         #table {
             display: none;
+            height: 600px;
+            width: 100%;
         }
         table {
             width: 100%;
@@ -65,14 +67,6 @@
         .title {
             font-size: 24px;
         }
-        /* Custom CSS for the red marker */
-        .leaflet-div-icon.custom-red-marker {
-            background-color: red;
-            border-radius: 50%;
-            height: 25px;
-            width: 25px;
-            border: 2px solid #fff;
-        }
     </style>
 </head>
 <body>
@@ -89,6 +83,12 @@
     </div>
     <h1>Carte des établissements concurrents</h1>
     <div id="map"></div>
+    <div id="legend">
+        <input type="checkbox" id="boardGameCheckbox" checked>
+        <label for="boardGameCheckbox">Bord Game</label>
+        <input type="checkbox" id="vapeStoreCheckbox" checked>
+        <label for="vapeStoreCheckbox">Vape Store</label>
+    </div>
     <div id="table">
         <table>
             <thead>
@@ -118,10 +118,9 @@
             fetchData(table);
         }
 
-        // Fonction pour créer les en-têtes du tableau
         function createTableHeaders(headers) {
             const tableHeaders = document.getElementById('table-headers');
-            tableHeaders.innerHTML = ''; // Réinitialiser les en-têtes
+            tableHeaders.innerHTML = '';
             headers.forEach(header => {
                 const th = document.createElement('th');
                 th.textContent = header;
@@ -129,10 +128,9 @@
             });
         }
 
-        // Fonction pour créer les lignes du tableau
         function createTableRows(rows) {
             const tableBody = document.getElementById('table-body');
-            tableBody.innerHTML = ''; // Réinitialiser le corps du tableau
+            tableBody.innerHTML = '';
             rows.forEach(row => {
                 const tr = document.createElement('tr');
                 Object.values(row).forEach(value => {
@@ -144,17 +142,14 @@
             });
         }
 
-        // Initialisation de la carte
         var map = L.map('map').setView([48.897891998291016, 2.0886409282684326], 12);
 
-        // Ajout des tuiles OpenStreetMap
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
-        // Création des icônes personnalisées
         var customIconPurple = L.icon({
-            iconUrl: 'images/tuile_generic_purple.png', // Chemin relatif à l'image
+            iconUrl: 'images/tuile_generic_purple.png',
             iconSize: [25, 41],
             iconAnchor: [12, 41],
             popupAnchor: [1, -34],
@@ -162,45 +157,63 @@
         });
 
         var customIconRed = L.icon({
-            iconUrl: 'images/tuile_generic_red.png', // Chemin relatif à l'image
+            iconUrl: 'images/tuile_generic_red.png',
             iconSize: [25, 41],
             iconAnchor: [12, 41],
             popupAnchor: [1, -34],
             shadowSize: [41, 41]
         });
 
-        // Fonction pour récupérer les données du fichier PHP
-        function fetchData(table) {
-            fetch('fetch_data.php?table=' + table)
+        var markers = {
+            boardGame: [],
+            vapeStore: []
+        };
+
+        function fetchData() {
+            fetch('fetch_data.php')
                 .then(response => response.json())
                 .then(data => {
-                    if (data.length > 0) {
-                        const headers = Object.keys(data[0]);
-                        createTableHeaders(headers);
-                        createTableRows(data);
-
-                        map.eachLayer(function (layer) {
-                            if (layer instanceof L.Marker) {
-                                map.removeLayer(layer);
-                            }
-                        });
-
-                        data.forEach(function(item) {
-                            var icon = table === 'societe_info_competitor' ? customIconPurple : customIconRed;
-                            L.marker([item.lat, item.long], {icon: icon}).addTo(map)
-                                .bindPopup(item.name + "<br>" + item.formatted + "<br>" + item.site_web + "<br>" + "CA :" + item.ca_dernier + "€" );
-                        });
-                    }
+                    markers.boardGame = addMarkers(data.societe_info_competitor, customIconPurple);
+                    markers.vapeStore = addMarkers(data.societe_info_vape_competitor, customIconRed);
                 })
                 .catch(error => console.error('Error:', error));
         }
 
-        // Charger les données par défaut de la table 'societe_info_competitor'
-        fetchData('societe_info_competitor');
+        function addMarkers(data, icon) {
+            var markerList = [];
+            data.forEach(function(item) {
+                var marker = L.marker([item.lat, item.long], {icon: icon})
+                    .bindPopup(item.name + "<br>" + item.formatted + "<br>" + item.site_web + "<br>" + "CA :" + item.ca_dernier + "€" );
+                marker.addTo(map);
+                markerList.push(marker);
+            });
+            return markerList;
+        }
+
+        function toggleMarkers(type, show) {
+            markers[type].forEach(marker => {
+                if (show) {
+                    marker.addTo(map);
+                } else {
+                    map.removeLayer(marker);
+                }
+            });
+        }
+
+        document.getElementById('boardGameCheckbox').addEventListener('change', function() {
+            toggleMarkers('boardGame', this.checked);
+        });
+
+        document.getElementById('vapeStoreCheckbox').addEventListener('change', function() {
+            toggleMarkers('vapeStore', this.checked);
+        });
+
+        // Initial fetch of data
+        fetchData();
 
         // Ajout d'un marqueur rouge pour les coordonnées spécifiques
         var redIcon = L.icon({
-            iconUrl: 'images/tuile_lions.png', // Chemin relatif à l'image
+            iconUrl: 'images/tuile_lions.png',
             iconSize: [25, 41],
             iconAnchor: [12, 41],
             popupAnchor: [1, -34],
