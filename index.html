@@ -21,6 +21,7 @@
             display: none;
             height: 600px;
             width: 100%;
+            overflow-y: scroll;
         }
         table {
             width: 100%;
@@ -141,12 +142,12 @@
                 .then(response => response.json())
                 .then(data => {
                     if (table === 'societe_info_competitor') {
-                        markers.boardGame = addMarkers(data, customIconPurple);
+                        markers.boardGame = addMarkers(data.societe_info_competitor, customIconPurple);
                     } else if (table === 'societe_info_vape_competitor') {
-                        markers.vapeStore = addMarkers(data, customIconRed);
+                        markers.vapeStore = addMarkers(data.societe_info_vape_competitor, customIconRed);
                     }
-                    createTableHeaders(Object.keys(data[0]));
-                    createTableRows(data);
+                    createTableHeaders(Object.keys(data[table][0]));
+                    createTableRows(data[table]);
                 })
                 .catch(error => console.error('Error:', error));
         }
