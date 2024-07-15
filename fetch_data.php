@@ -40,13 +40,13 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-$data = array();
-
-// Récupération des données de la table 'societe_info_competitor'
+// Récupération des données de la table societe_info_competitor
 $sqlCompetitor = "SELECT * FROM societe_info_competitor";
 $resultCompetitor = $conn->query($sqlCompetitor);
 
+// Vérification des résultats et formatage en JSON
 if ($resultCompetitor->num_rows > 0) {
+    $data['societe_info_competitor'] = array();
     while ($row = $resultCompetitor->fetch_assoc()) {
         // Géocodage de l'adresse et ajout des coordonnées géographiques
         $geocodedData = geocodeAddress($row['address']);
@@ -60,14 +60,19 @@ if ($resultCompetitor->num_rows > 0) {
             $data['societe_info_competitor'][] = $row;
         }
     }
+} else {
+    // Retourne un tableau vide si aucune donnée trouvée
+    $data['societe_info_competitor'] = array();
 }
 
-// Récupération des données de la table 'societe_info_vape_competitor'
-$sqlVapeCompetitor = "SELECT * FROM societe_info_vape_competitor";
-$resultVapeCompetitor = $conn->query($sqlVapeCompetitor);
+// Récupération des données de la table societe_info_vape_competitor
+$sqlVape = "SELECT * FROM societe_info_vape_competitor";
+$resultVape = $conn->query($sqlVape);
 
-if ($resultVapeCompetitor->num_rows > 0) {
-    while ($row = $resultVapeCompetitor->fetch_assoc()) {
+// Vérification des résultats et formatage en JSON
+if ($resultVape->num_rows > 0) {
+    $data['societe_info_vape_competitor'] = array();
+    while ($row = $resultVape->fetch_assoc()) {
         // Géocodage de l'adresse et ajout des coordonnées géographiques
         $geocodedData = geocodeAddress($row['address']);
         if ($geocodedData) {
@@ -80,12 +85,14 @@ if ($resultVapeCompetitor->num_rows > 0) {
             $data['societe_info_vape_competitor'][] = $row;
         }
     }
+} else {
+    // Retourne un tableau vide si aucune donnée trouvée
+    $data['societe_info_vape_competitor'] = array();
 }
 
-// Fermeture de la connexion
+// Fermeture de la connexion MySQL
 $conn->close();
 
-// Retourne les données au format JSON
+// Retourne les données encodées en JSON
 echo json_encode($data);
 ?>
-
