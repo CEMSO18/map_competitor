@@ -40,31 +40,52 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Récupération des données en fonction de la table spécifiée
-$table = $_GET['table'];
-$sql = "SELECT * FROM $table";
-$result = $conn->query($sql);
+$data = array();
 
-// Vérification des résultats et formatage en JSON
-if ($result->num_rows > 0) {
-    $data = array();
-    while($row = $result->fetch_assoc()) {
+// Récupération des données de la table 'societe_info_competitor'
+$sqlCompetitor = "SELECT * FROM societe_info_competitor";
+$resultCompetitor = $conn->query($sqlCompetitor);
+
+if ($resultCompetitor->num_rows > 0) {
+    while ($row = $resultCompetitor->fetch_assoc()) {
         // Géocodage de l'adresse et ajout des coordonnées géographiques
         $geocodedData = geocodeAddress($row['address']);
         if ($geocodedData) {
             $row['lat'] = $geocodedData['lat'];
             $row['long'] = $geocodedData['long'];
             $row['formatted'] = $geocodedData['formatted'];
-            $data[] = $row;
+            $data['societe_info_competitor'][] = $row;
         } else {
             // En cas d'erreur de géocodage, ajoutez l'entrée sans coordonnées
-            $data[] = $row;
+            $data['societe_info_competitor'][] = $row;
         }
     }
-    echo json_encode($data);
-} else {
-    echo json_encode(array()); // Retourne un tableau vide si aucune donnée trouvée
 }
 
+// Récupération des données de la table 'societe_info_vape_competitor'
+$sqlVapeCompetitor = "SELECT * FROM societe_info_vape_competitor";
+$resultVapeCompetitor = $conn->query($sqlVapeCompetitor);
+
+if ($resultVapeCompetitor->num_rows > 0) {
+    while ($row = $resultVapeCompetitor->fetch_assoc()) {
+        // Géocodage de l'adresse et ajout des coordonnées géographiques
+        $geocodedData = geocodeAddress($row['address']);
+        if ($geocodedData) {
+            $row['lat'] = $geocodedData['lat'];
+            $row['long'] = $geocodedData['long'];
+            $row['formatted'] = $geocodedData['formatted'];
+            $data['societe_info_vape_competitor'][] = $row;
+        } else {
+            // En cas d'erreur de géocodage, ajoutez l'entrée sans coordonnées
+            $data['societe_info_vape_competitor'][] = $row;
+        }
+    }
+}
+
+// Fermeture de la connexion
 $conn->close();
+
+// Retourne les données au format JSON
+echo json_encode($data);
 ?>
+
