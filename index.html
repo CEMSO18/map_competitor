@@ -89,7 +89,7 @@
         <input type="checkbox" id="vapeStoreCheckbox" checked>
         <label for="vapeStoreCheckbox">Vape Store</label>
         <input type="checkbox" id="lionIconCheckbox" checked>
-        <label for="lionIconCheckbox">Lions Pub</label>
+        <label for="lionIconCheckbox">Afficher Lion Icon</label>
     </div>
     <div id="table">
         <table>
@@ -133,56 +133,8 @@
         var markers = {
             boardGame: [],
             vapeStore: [],
-            lionsPub: null
+            lionIcon: null
         };
-
-        function fetchData(table) {
-            return fetch('fetch_data.php?table=' + table)
-                .then(response => response.json())
-                .then(data => data)
-                .catch(error => console.error('Error:', error));
-        }
-
-        function addMarkers(data, icon) {
-            var markerList = [];
-            data.forEach(function(item) {
-                var marker = L.marker([item.lat, item.long], {icon: icon})
-                    .bindPopup(item.name + "<br>" + item.formatted + "<br>" + item.site_web + "<br>" + "CA :" + item.ca_dernier + "€" );
-                marker.addTo(map);
-                markerList.push(marker);
-            });
-            return markerList;
-        }
-
-        function toggleMarkers(type, show) {
-            if (type === 'lionsPub') {
-                if (show && markers.lionsPub) {
-                    markers.lionsPub.addTo(map);
-                } else {
-                    map.removeLayer(markers.lionsPub);
-                }
-            } else {
-                markers[type].forEach(marker => {
-                    if (show) {
-                        marker.addTo(map);
-                    } else {
-                        map.removeLayer(marker);
-                    }
-                });
-            }
-        }
-
-        document.getElementById('boardGameCheckbox').addEventListener('change', function() {
-            toggleMarkers('boardGame', this.checked);
-        });
-
-        document.getElementById('vapeStoreCheckbox').addEventListener('change', function() {
-            toggleMarkers('vapeStore', this.checked);
-        });
-
-        document.getElementById('lionIconCheckbox').addEventListener('change', function() {
-            toggleMarkers('lionsPub', this.checked);
-        });
 
         function toggleDropdown() {
             var dropdownContent = document.getElementById("dropdown-content");
@@ -212,53 +164,85 @@
                         markers.vapeStore = addMarkers(data, customIconRed);
                     }
                     populateTable(data);
+                    showMarkersOnMap(data);
                 })
                 .catch(error => console.error('Error fetching data:', error));
         }
 
-        function populateTable(data) {
-            createTableHeaders(Object.keys(data[0]));
-            createTableRows(data);
+        function fetchData(table) {
+            return fetch('fetch_data.php?table=' + table)
+                .then(response => response.json())
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                    return [];
+                });
         }
 
-        function createTableHeaders(headers) {
+        function populateTable(data) {
             const tableHeaders = document.getElementById('table-headers');
             tableHeaders.innerHTML = '';
+            const headers = Object.keys(data[0]);
             headers.forEach(header => {
                 const th = document.createElement('th');
                 th.textContent = header;
                 tableHeaders.appendChild(th);
             });
-        }
 
-        function createTableRows(rows) {
             const tableBody = document.getElementById('table-body');
             tableBody.innerHTML = '';
-            rows.forEach(row => {
+            data.forEach(rowData => {
                 const tr = document.createElement('tr');
-                Object.values(row).forEach(value => {
+                headers.forEach(header => {
                     const td = document.createElement('td');
-                    td.textContent = value;
+                    td.textContent = rowData[header];
                     tr.appendChild(td);
                 });
                 tableBody.appendChild(tr);
             });
         }
 
-        // Initial fetch of data for the default view
-        fetchData('societe_info_competitor')
-            .then(data => {
-                markers.boardGame = addMarkers(data, customIconPurple);
-                populateTable(data);
-            })
-            .catch(error => console.error('Error fetching initial data:', error));
+        function addMarkers(data, icon) {
+            return data.map(item => {
+                const marker = L.marker([item.lat, item.long], { icon: icon })
+                    .bindPopup(item.name + "<br>" + item.formatted + "<br>" + item.site_web + "<br>" + "CA :" + item.ca_dernier + "€" );
+                marker.addTo(map);
+                return marker;
+            });
+        }
 
-        // Ajout du marqueur pour Lions Pub
-        markers.lionsPub = L.marker([48.897891998291016, 2.0886409282684326], {icon: lionIcon});
+        function toggleMarkers(type, show) {
+            markers[type].forEach(marker => {
+                if (show) {
+                    marker.addTo(map);
+                } else {
+                    map.removeLayer(marker);
+                }
+            });
+        }
+
+        document.getElementById('boardGameCheckbox').addEventListener('change', function() {
+            toggleMarkers('boardGame', this.checked);
+        });
+
+        document.getElementById('vapeStoreCheckbox').addEventListener('change', function() {
+            toggleMarkers('vapeStore', this.checked);
+        });
 
         document.getElementById('lionIconCheckbox').addEventListener('change', function() {
-            toggleMarkers('lionsPub', this.checked);
+            if (this.checked) {
+                if (!markers.lionIcon) {
+                    markers.lionIcon = L.marker([48.897891998291016, 2.0886409282684326], { icon: lionIcon }).addTo(map)
+                        .bindPopup("<b>The Gentlemen Pubs</b><br><img src='images/lions_pub_full.png' alt='Lions Pub' width='100'>");
+                } else {
+                    map.addLayer(markers.lionIcon);
+                }
+            } else {
+                map.removeLayer(markers.lionIcon);
+            }
         });
+
+        // Initial fetch of data for the default view
+        showTable('societe_info_competitor');
     </script>
 </body>
 </html>
