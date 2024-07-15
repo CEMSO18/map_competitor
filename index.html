@@ -14,8 +14,12 @@
             height: 600px;
             width: 100%;
         }
+        #legend {
+            padding: 10px;
+        }
         #table {
             display: none;
+            height: 600px;
             width: 100%;
         }
         table {
@@ -63,9 +67,6 @@
         .title {
             font-size: 24px;
         }
-        .legend {
-            margin-top: 10px;
-        }
     </style>
 </head>
 <body>
@@ -73,64 +74,30 @@
         <div class="dropdown">
             <button onclick="toggleDropdown()">Menu</button>
             <div id="dropdown-content" class="dropdown-content">
-                <button onclick="showTable('competitor')">Bord Game</button>
-                <button onclick="showTable('vape')">Vape Store</button>
+                <button onclick="showMap()">Afficher la carte</button>
+                <button onclick="showTable('societe_info_competitor')">Bord Game</button>
+                <button onclick="showTable('societe_info_vape_competitor')">Vape Store</button>
             </div>
         </div>
         <div class="title">Magasin concurrent en vente de jeux de sociétés</div>
     </div>
     <h1>Carte des établissements concurrents</h1>
     <div id="map"></div>
-    <div class="legend">
-        <label><input type="checkbox" id="showCompetitors" checked> Bord Game</label>
-        <label><input type="checkbox" id="showVapeStores" checked> Vape Store</label>
+    <div id="legend">
+        <input type="checkbox" id="boardGameCheckbox" checked>
+        <label for="boardGameCheckbox">Bord Game</label>
+        <input type="checkbox" id="vapeStoreCheckbox" checked>
+        <label for="vapeStoreCheckbox">Vape Store</label>
     </div>
     <div id="table">
         <table>
             <thead>
-                <tr id="tableHeaders"></tr>
+                <tr id="table-headers"></tr>
             </thead>
-            <tbody id="tableBody"></tbody>
+            <tbody id="table-body"></tbody>
         </table>
     </div>
     <script>
-        function toggleDropdown() {
-            var dropdownContent = document.getElementById("dropdown-content");
-            dropdownContent.style.display = (dropdownContent.style.display === "block") ? "none" : "block";
-        }
-
-        function showTable(type) {
-            document.getElementById("map").style.display = "none";
-            document.getElementById("table").style.display = "block";
-            populateTable(type);
-        }
-
-        function populateTable(type) {
-            let data = (type === 'competitor') ? competitorData : vapeData;
-            let headers = Object.keys(data[0]);
-            let tableHeaders = document.getElementById("tableHeaders");
-            let tableBody = document.getElementById("tableBody");
-
-            tableHeaders.innerHTML = "";
-            tableBody.innerHTML = "";
-
-            headers.forEach(header => {
-                let th = document.createElement("th");
-                th.innerText = header;
-                tableHeaders.appendChild(th);
-            });
-
-            data.forEach(row => {
-                let tr = document.createElement("tr");
-                headers.forEach(header => {
-                    let td = document.createElement("td");
-                    td.innerText = row[header];
-                    tr.appendChild(td);
-                });
-                tableBody.appendChild(tr);
-            });
-        }
-
         var map = L.map('map').setView([48.897891998291016, 2.0886409282684326], 12);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -153,55 +120,127 @@
             shadowSize: [41, 41]
         });
 
-        var competitorMarkers = [];
-        var vapeMarkers = [];
+        var markers = {
+            boardGame: [],
+            vapeStore: []
+        };
 
-        function loadMarkers() {
-            competitorData.forEach(function(address) {
-                let marker = L.marker([address.lat, address.long], {icon: customIconPurple}).bindPopup(address.name + "<br>" + address.formatted + "<br>" + address.site_web + "<br>" + "CA :" + address.ca_dernier + "€");
-                competitorMarkers.push(marker);
+        function fetchData(table) {
+            return fetch('fetch_data.php?table=' + table)
+                .then(response => response.json())
+                .then(data => data)
+                .catch(error => console.error('Error:', error));
+        }
+
+        function addMarkers(data, icon) {
+            var markerList = [];
+            data.forEach(function(item) {
+                var marker = L.marker([item.lat, item.long], {icon: icon})
+                    .bindPopup(item.name + "<br>" + item.formatted + "<br>" + item.site_web + "<br>" + "CA :" + item.ca_dernier + "€" );
                 marker.addTo(map);
+                markerList.push(marker);
             });
+            return markerList;
+        }
 
-            vapeData.forEach(function(address) {
-                let marker = L.marker([address.lat, address.long], {icon: customIconRed}).bindPopup(address.name + "<br>" + address.formatted + "<br>" + address.site_web + "<br>" + "CA :" + address.ca_dernier + "€");
-                vapeMarkers.push(marker);
-                marker.addTo(map);
+        function toggleMarkers(type, show) {
+            markers[type].forEach(marker => {
+                if (show) {
+                    marker.addTo(map);
+                } else {
+                    map.removeLayer(marker);
+                }
             });
         }
 
-        document.getElementById('showCompetitors').addEventListener('change', function(e) {
-            if (e.target.checked) {
-                competitorMarkers.forEach(marker => marker.addTo(map));
-            } else {
-                competitorMarkers.forEach(marker => marker.removeFrom(map));
-            }
+        document.getElementById('boardGameCheckbox').addEventListener('change', function() {
+            toggleMarkers('boardGame', this.checked);
         });
 
-        document.getElementById('showVapeStores').addEventListener('change', function(e) {
-            if (e.target.checked) {
-                vapeMarkers.forEach(marker => marker.addTo(map));
-            } else {
-                vapeMarkers.forEach(marker => marker.removeFrom(map));
-            }
+        document.getElementById('vapeStoreCheckbox').addEventListener('change', function() {
+            toggleMarkers('vapeStore', this.checked);
         });
 
-        var competitorData = [];
-        var vapeData = [];
+        function toggleDropdown() {
+            var dropdownContent = document.getElementById("dropdown-content");
+            if (dropdownContent.style.display === "none" || dropdownContent.style.display === "") {
+                dropdownContent.style.display = "block";
+            } else {
+                dropdownContent.style.display = "none";
+            }
+        }
 
-        fetch('data.php')
-            .then(response => response.json())
-            .then(data => {
-                competitorData = data.competitorData;
-                vapeData = data.vapeData;
-                loadMarkers();
-            });
-
-        // Show table button click event
-        document.querySelector('.dropdown-content button').addEventListener('click', () => {
+        function showMap() {
             document.getElementById("map").style.display = "block";
             document.getElementById("table").style.display = "none";
+        }
+
+        function showTable(table) {
+            document.getElementById("map").style.display = "none";
+            document.getElementById("table").style.display = "block";
+
+            fetchData(table)
+                .then(data => {
+                    if (table === 'societe_info_competitor') {
+                        markers.boardGame.forEach(marker => map.removeLayer(marker));
+                        markers.boardGame = addMarkers(data, customIconPurple);
+                    } else if (table === 'societe_info_vape_competitor') {
+                        markers.vapeStore.forEach(marker => map.removeLayer(marker));
+                        markers.vapeStore = addMarkers(data, customIconRed);
+                    }
+                    populateTable(data);
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
+
+        function populateTable(data) {
+            createTableHeaders(Object.keys(data[0]));
+            createTableRows(data);
+        }
+
+        function createTableHeaders(headers) {
+            const tableHeaders = document.getElementById('table-headers');
+            tableHeaders.innerHTML = '';
+            headers.forEach(header => {
+                const th = document.createElement('th');
+                th.textContent = header;
+                tableHeaders.appendChild(th);
+            });
+        }
+
+        function createTableRows(rows) {
+            const tableBody = document.getElementById('table-body');
+            tableBody.innerHTML = '';
+            rows.forEach(row => {
+                const tr = document.createElement('tr');
+                Object.values(row).forEach(value => {
+                    const td = document.createElement('td');
+                    td.textContent = value;
+                    tr.appendChild(td);
+                });
+                tableBody.appendChild(tr);
+            });
+        }
+
+        // Initial fetch of data for the default view
+        fetchData('societe_info_competitor')
+            .then(data => {
+                markers.boardGame = addMarkers(data, customIconPurple);
+                populateTable(data);
+            })
+            .catch(error => console.error('Error fetching initial data:', error));
+
+        // Ajout d'un marqueur rouge pour les coordonnées spécifiques
+        var redIcon = L.icon({
+            iconUrl: 'images/tuile_lions.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
         });
+
+        L.marker([48.897891998291016, 2.0886409282684326], {icon: redIcon}).addTo(map)
+            .bindPopup("<b>The Gentlemen Pubs</b><br><img src='images/lions_pub_full.png' alt='Lions Pub' width='100'>");
     </script>
 </body>
 </html>
