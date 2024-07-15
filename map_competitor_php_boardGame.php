@@ -60,7 +60,7 @@ function getGeolocation($lat, $long, $apiKey) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geolocation Results</title>
+    <title>Geolocation board_game_store</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <style>
@@ -196,26 +196,33 @@ function getGeolocation($lat, $long, $apiKey) {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
-        // Ajout des marqueurs pour chaque adresse
+        // Création de l'icône personnalisée
+        var customIcon = L.icon({
+            iconUrl: 'images/tuile_generic_purple.png', // Chemin relatif à l'image
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+        });
+
+        // Ajout des marqueurs pour chaque adresse avec l'icône personnalisée
         var addresses = <?php echo json_encode($results); ?>;
         addresses.forEach(function(address) {
-            L.marker([address.lat, address.long]).addTo(map)
+            L.marker([address.lat, address.long], {icon: customIcon}).addTo(map)
                 .bindPopup(address.name + "<br>" + address.formatted + "<br>" + address.site_web + "<br>" + "CA :" + address.ca_dernier + "€" );
         });
 
         // Ajout d'un marqueur rouge pour les coordonnées spécifiques
         var redIcon = L.icon({
-            iconUrl: 'https://www.datavis.fr/tutorials/maps/leaflet-control/map-icons/games.png',
+            iconUrl: 'images/tuile_lions.png', // Chemin relatif à l'image
             iconSize: [25, 41],
             iconAnchor: [12, 41],
             popupAnchor: [1, -34],
-            shadowSize: [41, 41],
+            shadowSize: [41, 41]
         });
 
         L.marker([48.897891998291016, 2.0886409282684326], {icon: redIcon}).addTo(map)
-            .bindPopup("The Gentlemen Pubs");
+            .bindPopup("<b>The Gentlemen Pubs</b><br><img src='images/lions_pub_full.png' alt='Lions Pub' width='100'>");
     </script>
 </body>
 </html>
-
-
