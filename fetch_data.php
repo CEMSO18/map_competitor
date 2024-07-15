@@ -1,6 +1,30 @@
 <?php
-// Clé API OpenCage
-$apiKey = 'your-opencage-api-key'; // Remplacez par votre clé API OpenCage
+require 'vendor/autoload.php'; // Assurez-vous d'avoir inclus le chemin correct vers autoload.php de Composer
+
+// Importation de la classe OpenCageGeocode
+use OpenCage\Geocoder\Geocoder;
+
+// Fonction pour géocoder une adresse avec OpenCage
+function geocodeAddress($address) {
+    $geocoder = new Geocoder('efd17e46c9324adfbd1f7d1e04995748'); // Remplacez par votre clé API OpenCage
+
+    try {
+        $result = $geocoder->geocode($address);
+        if ($result && $result['total_results'] > 0) {
+            $firstResult = $result['results'][0];
+            return [
+                'lat' => $firstResult['geometry']['lat'],
+                'long' => $firstResult['geometry']['lng'],
+                'formatted' => $firstResult['formatted'],
+            ];
+        } else {
+            return null; // Retourne null si aucune résultat trouvé
+        }
+    } catch (Exception $e) {
+        error_log('Error geocoding address: ' . $e->getMessage());
+        return null;
+    }
+}
 
 // Connexion à la base de données MySQL
 $servername = "127.0.0.1";
@@ -8,43 +32,39 @@ $username = "root";
 $password = "";
 $dbname = "lions_pub_nikita";
 
+// Création de la connexion
 $conn = new mysqli($servername, $username, $password, $dbname);
 
+// Vérification de la connexion
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Fonction pour obtenir des informations de géolocalisation depuis OpenCage
-function getGeolocation($lat, $long, $apiKey) {
-    $url = "https://api.opencagedata.com/geocode/v1/json?q={$lat}+{$long}&key={$apiKey}";
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    $response = curl_exec($ch);
-    curl_close($ch);
-    return json_decode($response, true);
-}
+// Récupération des données en fonction de la table spécifiée
+$table = $_GET['table'];
+$sql = "SELECT * FROM $table";
+$result = $conn->query($sql);
 
-// Fonction pour récupérer les données de la table et ajouter l'adresse formatée
-function fetchData($table, $conn, $apiKey) {
-    $sql = "SELECT * FROM $table";
-    $result = $conn->query($sql);
-    $results = [];
-
-    if ($result->num_rows > 0) {
-        while($row = $result->fetch_assoc()) {
-            $geolocation = getGeolocation($row['lat'], $row['long'], $apiKey);
-            $formattedAddress = isset($geolocation['results'][0]['formatted']) ? $geolocation['results'][0]['formatted'] : "No results found";
-            $results[] = array_merge($row, ["formatted" => $formattedAddress]);
+// Vérification des résultats et formatage en JSON
+if ($result->num_rows > 0) {
+    $data = array();
+    while($row = $result->fetch_assoc()) {
+        // Géocodage de l'adresse et ajout des coordonnées géographiques
+        $geocodedData = geocodeAddress($row['address']);
+        if ($geocodedData) {
+            $row['lat'] = $geocodedData['lat'];
+            $row['long'] = $geocodedData['long'];
+            $row['formatted'] = $geocodedData['formatted'];
+            $data[] = $row;
+        } else {
+            // En cas d'erreur de géocodage, ajoutez l'entrée sans coordonnées
+            $data[] = $row;
         }
     }
-    return $results;
+    echo json_encode($data);
+} else {
+    echo json_encode(array()); // Retourne un tableau vide si aucune donnée trouvée
 }
 
-$competitorData = fetchData("societe_info_competitor", $conn, $apiKey);
-$vapeData = fetchData("societe_info_vape_competitor", $conn, $apiKey);
-
 $conn->close();
-
-echo json_encode(["competitorData" => $competitorData, "vapeData" => $vapeData]);
 ?>
