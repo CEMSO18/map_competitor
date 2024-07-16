@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,96 +9,62 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-        }
-        #map {
-            height: 600px;
-            width: 100%;
-        }
-        #legend {
-            padding: 10px;
-        }
-        #table {
-            display: none;
-            height: 600px;
-            width: 100%;
-            overflow-y: scroll;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        table, th, td {
-            border: 1px solid black;
-        }
-        th, td {
-            padding: 10px;
-            text-align: left;
-        }
-        .header {
+            margin: 0;
+            padding: 0;
             display: flex;
+        }
+        .sidebar {
+            background-color: #007bff; /* couleur bleue */
+            color: #fff; /* texte blanc */
+            width: 200px; /* largeur de la barre latérale */
+            height: 100vh; /* pleine hauteur de la fenêtre */
+            display: flex;
+            flex-direction: column;
             align-items: center;
-            padding: 10px;
+            padding-top: 20px;
         }
-        .dropdown {
-            position: relative;
-            margin-right: 20px;
-        }
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            background-color: #f9f9f9;
-            min-width: 160px;
-            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-            z-index: 1;
-        }
-        .dropdown-content button {
-            color: black;
-            padding: 12px 16px;
+        .sidebar a {
             text-decoration: none;
+            color: #fff;
+            margin: 10px 0;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
             display: block;
-            width: 100%;
-            text-align: left;
-            background: none;
-            border: none;
-            cursor: pointer;
         }
-        .dropdown-content button:hover {
-            background-color: #f1f1f1;
+        .sidebar a:hover {
+            background-color: #0056b3; /* couleur bleue foncée au survol */
         }
         .title {
             font-size: 24px;
+            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="dropdown">
-            <button onclick="toggleDropdown()">Menu</button>
-            <div id="dropdown-content" class="dropdown-content">
-                <button onclick="showMap()">Afficher la carte</button>
-                <button onclick="showTable('societe_info_competitor')">Bord Game</button>
-                <button onclick="showTable('societe_info_vape_competitor')">Vape Store</button>
-            </div>
+    <div class="sidebar">
+        <a href="#" onclick="showMap()">Afficher Carte</a>
+        <label for="boardGameCheckbox">
+            <input type="checkbox" id="boardGameCheckbox" checked> Board Game
+        </label>
+        <label for="vapeStoreCheckbox">
+            <input type="checkbox" id="vapeStoreCheckbox" checked> Vape Store
+        </label>
+        <label for="lionCheckbox">
+            <input type="checkbox" id="lionCheckbox" checked> Lion
+        </label>
+    </div>
+    <div class="content">
+        <h1 class="title">Présentation visuelle de la concurrence</h1>
+        <div id="map"></div>
+        <div id="table">
+            <table>
+                <thead>
+                    <tr id="table-headers"></tr>
+                </thead>
+                <tbody id="table-body"></tbody>
+            </table>
         </div>
-        <div class="title">Présentation visuelle de la concurrence</div>
-    </div>
-    <h1>Carte des établissements concurrents</h1>
-    <div id="map"></div>
-    <div id="legend">
-        <input type="checkbox" id="boardGameCheckbox" checked>
-        <label for="boardGameCheckbox">Bord Game</label>
-        <input type="checkbox" id="vapeStoreCheckbox" checked>
-        <label for="vapeStoreCheckbox">Vape Store</label>
-        <input type="checkbox" id="lionCheckbox" checked>
-        <label for="lionCheckbox">Lion</label>
-    </div>
-    <div id="table">
-        <table>
-            <thead>
-                <tr id="table-headers"></tr>
-            </thead>
-            <tbody id="table-body"></tbody>
-        </table>
     </div>
     <script>
         var map = L.map('map').setView([48.897891998291016, 2.0886409282684326], 12);
@@ -183,16 +149,12 @@
 
         document.getElementById('lionCheckbox').addEventListener('change', function() {
             toggleMarkers('lion', this.checked);
-        });
-
-        function toggleDropdown() {
-            var dropdownContent = document.getElementById("dropdown-content");
-            if (dropdownContent.style.display === "none" || dropdownContent.style.display === "") {
-                dropdownContent.style.display = "block";
+            if (this.checked) {
+                lionMarker.addTo(map);
             } else {
-                dropdownContent.style.display = "none";
+                map.removeLayer(lionMarker);
             }
-        }
+        });
 
         function showMap() {
             document.getElementById("map").style.display = "block";
