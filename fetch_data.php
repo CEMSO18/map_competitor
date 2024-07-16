@@ -1,5 +1,5 @@
 <?php
-require '/c/xampp/phpMyAdmin/vendor/autoload.php'; // Assurez-vous d'avoir inclus le chemin correct vers autoload.php de Composer
+require '/c/xampp/htdocs/map_competitor/vendor/autoload.php'; // Assurez-vous d'avoir inclus le chemin correct vers autoload.php de Composer
 
 // Importation de la classe OpenCageGeocode
 use OpenCage\Geocoder\Geocoder;
