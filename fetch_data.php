@@ -48,8 +48,9 @@ foreach ($tables as $table) {
 
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
-            // Assurez-vous que $row['address'] contient l'adresse à géocoder
-            $geocodedData = geocodeAddress($row['address'], $apiKey);
+            // Assurez-vous que $row['rue'], $row['code_postal'], $row['ville'] contiennent l'adresse à géocoder
+            $address = $row['rue'] . ', ' . $row['code_postal'] . ' ' . $row['ville'];
+            $geocodedData = geocodeAddress($address, $apiKey);
             if ($geocodedData) {
                 $row['lat'] = $geocodedData['lat'];
                 $row['long'] = $geocodedData['long'];
