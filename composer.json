@@ -1,6 +1,6 @@
 {
     "require": {
-        "opencage/geocode": "^1.2"
+        "opencage/geocode": "^3.0"
     },
     "autoload": {
         "psr-4": {
