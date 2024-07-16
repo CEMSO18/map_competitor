@@ -80,6 +80,7 @@
         <button class="btn" onclick="showMap()">Afficher la carte</button>
         <button class="btn" onclick="showTable('societe_info_competitor')">Board Game</button>
         <button class="btn" onclick="showTable('societe_info_vape_competitor')">Vape Store</button>
+        <button class="btn" onclick="showTable('societe_info_gameBar_competitor')">Game Bar</button>
         <img src="images/lions_pub_full_without_background.png" alt="The Gentlemen's Pub" width="50">
         <div class="title">The Gentlemen's Pub</div>
     </div>
@@ -90,6 +91,8 @@
         <label for="boardGameCheckbox">Board Game</label>
         <input type="checkbox" id="vapeStoreCheckbox" checked>
         <label for="vapeStoreCheckbox">Vape Store</label>
+        <input type="checkbox" id="gameBarCheckbox" checked>
+        <label for="gameBarCheckbox">Game Bar</label>
         <input type="checkbox" id="lionCheckbox" checked>
         <label for="lionCheckbox">Lion</label>
     </div>
@@ -124,6 +127,14 @@
             shadowSize: [41, 41]
         });
 
+        var customIconBlue = L.icon({
+            iconUrl: 'images/tuile_generic_bleu.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+        });
+
         var lionIcon = L.icon({
             iconUrl: 'images/tuile_lions.png',
             iconSize: [25, 41],
@@ -135,6 +146,7 @@
         var markers = {
             boardGame: [],
             vapeStore: [],
+            gameBar: [],
             lion: []
         };
 
@@ -145,6 +157,7 @@
                     if (data.success) {
                         addMarkers(data.data.results_societe_info_competitor, customIconPurple, 'boardGame');
                         addMarkers(data.data.results_societe_info_vape_competitor, customIconRed, 'vapeStore');
+                        addMarkers(data.data.results_societe_info_gameBar_competitor, customIconBlue, 'gameBar');
                     } else {
                         console.error('Error:', data.error);
                     }
@@ -155,7 +168,7 @@
         function addMarkers(data, icon, type) {
             data.forEach(item => {
                 var marker = L.marker([item.lat, item.long], {icon: icon})
-                    .bindPopup(item.name + "<br>" + item.formatted + "<br>" + item.site_web + "<br>" + "CA :" + item.ca_dernier + "€" );
+                    .bindPopup(item.name + "<br>" + item.formatted + "<br>" + "CA :" + item.ca_dernier + "€" );
                 marker.addTo(map);
                 markers[type].push(marker);
             });
@@ -177,6 +190,10 @@
 
         document.getElementById('vapeStoreCheckbox').addEventListener('change', function() {
             toggleMarkers('vapeStore', this.checked);
+        });
+
+        document.getElementById('gameBarCheckbox').addEventListener('change', function() {
+            toggleMarkers('gameBar', this.checked);
         });
 
         document.getElementById('lionCheckbox').addEventListener('change', function() {
@@ -235,7 +252,7 @@
         // Initial fetch of data
         fetchData();
 
-        // Ajout d'un marqueur rouge pour les coordonnées spécifiques
+        // Ajout d'un marqueur lion pour les coordonnées spécifiques
         var lionMarker = L.marker([48.897891998291016, 2.0886409282684326], {icon: lionIcon}).addTo(map)
             .bindPopup("<b>The Gentlemen Pubs</b><br><img src='images/lions_pub_full.png' alt='Lions Pub' width='100'>");
 
