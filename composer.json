@@ -1,0 +1,10 @@
+{
+    "require": {
+        "opencage/geocode": "^1.2" // ou toute version requise par votre projet
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    }
+}
