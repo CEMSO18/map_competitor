@@ -137,6 +137,8 @@
             lion: []
         };
 
+        var lionCheckboxChecked = true; // Variable pour suivre l'état du checkbox Lion
+
         function fetchData(table) {
             fetch(`fetch_data.php?table=${table}`)
                 .then(response => response.json())
@@ -164,11 +166,22 @@
         }
 
         function toggleMarkers(type, show) {
+            if (type === 'lion') {
+                lionCheckboxChecked = show; // Met à jour l'état du checkbox Lion
+            }
             markers[type].forEach(marker => {
-                if (show) {
-                    marker.addTo(map);
+                if (type === 'lion') {
+                    if (show) {
+                        marker.addTo(map);
+                    } else {
+                        map.removeLayer(marker); // Supprime le marqueur de la carte si le checkbox Lion est décoché
+                    }
                 } else {
-                    map.removeLayer(marker); // Supprime le marqueur de la carte
+                    if (show) {
+                        marker.addTo(map);
+                    } else {
+                        map.removeLayer(marker); // Supprime le marqueur de la carte
+                    }
                 }
             });
         }
@@ -234,8 +247,13 @@
         fetchData('societe_info_vape_competitor');
 
         // Ajout d'un marqueur rouge pour les coordonnées spécifiques
-        L.marker([48.897891998291016, 2.0886409282684326], {icon: lionIcon}).addTo(map)
+        var lionMarker = L.marker([48.897891998291016, 2.0886409282684326], {icon: lionIcon}).addTo(map)
             .bindPopup("<b>The Gentlemen Pubs</b><br><img src='images/lions_pub_full.png' alt='Lions Pub' width='100'>");
+
+        // Contrôle initial de l'icône Lion en fonction de l'état initial du checkbox
+        if (!lionCheckboxChecked) {
+            map.removeLayer(lionMarker);
+        }
     </script>
 </body>
 </html>
