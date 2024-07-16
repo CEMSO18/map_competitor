@@ -77,11 +77,11 @@
 </head>
 <body>
     <div class="header">
-		<button class="btn" onclick="showMap()">Afficher la carte</button>
+        <button class="btn" onclick="showMap()">Afficher la carte</button>
         <button class="btn" onclick="showTable('societe_info_competitor')">Board Game</button>
         <button class="btn" onclick="showTable('societe_info_vape_competitor')">Vape Store</button>
-		<img src="images/lions_pub_full_without_background.png" alt="The Gentlemen's Pub" width="50">
-		<div class="title">The Gentlemen's Pub</div>
+        <img src="images/lions_pub_full_without_background.png" alt="The Gentlemen's Pub" width="50">
+        <div class="title">The Gentlemen's Pub</div>
     </div>
     <h1 id="mapTitle">Carte des établissements concurrents</h1>
     <div id="map"></div>
@@ -138,32 +138,27 @@
             lion: []
         };
 
-        function fetchData(table) {
-            fetch(`fetch_data.php?table=${table}`)
+        function fetchData() {
+            fetch('fetch_data.php')
                 .then(response => response.json())
                 .then(data => {
-                    console.log('Data received for ' + table + ':', data); // Ajout du console.log pour afficher les données reçues
-                    if (table === 'societe_info_competitor') {
-                        markers.boardGame = addMarkers(data.societe_info_competitor, customIconPurple);
-                    } else if (table === 'societe_info_vape_competitor') {
-                        markers.vapeStore = addMarkers(data.societe_info_vape_competitor, customIconRed);
+                    if (data.success) {
+                        addMarkers(data.data.results_societe_info_competitor, customIconPurple, 'boardGame');
+                        addMarkers(data.data.results_societe_info_vape_competitor, customIconRed, 'vapeStore');
+                    } else {
+                        console.error('Error:', data.error);
                     }
-                    createTableHeaders(Object.keys(data[table][0]));
-                    createTableRows(data[table]);
                 })
-                .catch(error => console.error('Error fetching data for ' + table + ':', error)); // Ajout du console.error pour afficher les erreurs
+                .catch(error => console.error('Error fetching data:', error));
         }
 
-        function addMarkers(data, icon) {
-            var markerList = [];
-            data.forEach(function(item) {
-                console.log('Adding marker for:', item); // Ajout du console.log pour afficher chaque élément ajouté comme marqueur
+        function addMarkers(data, icon, type) {
+            data.forEach(item => {
                 var marker = L.marker([item.lat, item.long], {icon: icon})
                     .bindPopup(item.name + "<br>" + item.formatted + "<br>" + item.site_web + "<br>" + "CA :" + item.ca_dernier + "€" );
                 marker.addTo(map);
-                markerList.push(marker);
+                markers[type].push(marker);
             });
-            return markerList;
         }
 
         function toggleMarkers(type, show) {
@@ -203,11 +198,18 @@
             document.getElementById("mapTitle").style.display = "block";
         }
 
-        function showTable(table) {
+        function showTable(type) {
             document.getElementById("map").style.display = "none";
             document.getElementById("table").style.display = "block";
             document.getElementById("mapTitle").style.display = "none";
-            fetchData(table);
+            var data;
+            if (type === 'societe_info_competitor') {
+                data = markers.boardGame;
+            } else if (type === 'societe_info_vape_competitor') {
+                data = markers.vapeStore;
+            }
+            createTableHeaders(Object.keys(data[0].options.icon.options));
+            createTableRows(data);
         }
 
         function createTableHeaders(headers) {
@@ -225,7 +227,7 @@
             tableBody.innerHTML = '';
             rows.forEach(row => {
                 const tr = document.createElement('tr');
-                Object.values(row).forEach(value => {
+                Object.values(row.options.icon.options).forEach(value => {
                     const td = document.createElement('td');
                     td.textContent = value;
                     tr.appendChild(td);
@@ -235,8 +237,7 @@
         }
 
         // Initial fetch of data
-        fetchData('societe_info_competitor');
-        fetchData('societe_info_vape_competitor');
+        fetchData();
 
         // Ajout d'un marqueur rouge pour les coordonnées spécifiques
         var lionMarker = L.marker([48.897891998291016, 2.0886409282684326], {icon: lionIcon}).addTo(map)
