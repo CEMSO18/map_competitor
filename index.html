@@ -41,6 +41,11 @@
             background-color: #384a5e; /* Couleur de fond bleu "braves navy" */
             color: #FFFFFF; /* Couleur de texte blanche */
         }
+        .header img {
+            margin-right: 10px; /* Espacement entre l'image et les boutons */
+            width: 50px; /* Ajustez la largeur selon vos besoins */
+            height: auto; /* Pour maintenir les proportions */
+        }
         .btn {
             text-decoration: none;
             padding: 10px;
@@ -72,10 +77,11 @@
 </head>
 <body>
     <div class="header">
-        <button class="btn" onclick="showMap()">Afficher la carte</button>
+		<button class="btn" onclick="showMap()">Afficher la carte</button>
         <button class="btn" onclick="showTable('societe_info_competitor')">Board Game</button>
         <button class="btn" onclick="showTable('societe_info_vape_competitor')">Vape Store</button>
-        <div class="title">The Gentlemen's Pub</div>
+		<img src="images/lions_pub_full_without_background.png" alt="The Gentlemen's Pub" width="50">
+		<div class="title">The Gentlemen's Pub</div>
     </div>
     <h1 id="mapTitle">Carte des établissements concurrents</h1>
     <div id="map"></div>
