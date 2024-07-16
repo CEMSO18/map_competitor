@@ -132,8 +132,8 @@
         });
 
         var markers = {
-            boardGame: [],
-            vapeStore: [],
+            boardGame: L.layerGroup(), // Utilisation de L.layerGroup pour les marqueurs bordGame
+            vapeStore: L.layerGroup(), // Utilisation de L.layerGroup pour les marqueurs vapeStore
             lion: L.layerGroup() // Utilisation de L.layerGroup pour les marqueurs lions
         };
 
@@ -163,19 +163,15 @@
         }
 
         function toggleMarkers(type, show) {
-            if (type === 'lion') {
-                if (show) {
-                    markers.lion.addTo(map); // Ajoute la couche des lions à la carte
-                } else {
-                    markers.lion.removeFrom(map); // Retire la couche des lions de la carte
-                }
+            markers[type].clearLayers(); // Efface les marqueurs existants dans la couche avant de les ajouter à nouveau
+            markers[type].addTo(map); // Ajoute la couche à la carte
+            if (show) {
+                markers[type].eachLayer(function(layer) {
+                    map.addLayer(layer); // Ajoute chaque marqueur à la carte
+                });
             } else {
-                markers[type].forEach(marker => {
-                    if (show) {
-                        marker.addTo(map);
-                    } else {
-                        map.removeLayer(marker);
-                    }
+                markers[type].eachLayer(function(layer) {
+                    map.removeLayer(layer); // Retire chaque marqueur de la carte
                 });
             }
         }
