@@ -26,42 +26,52 @@ function geocodeAddress($address, $apiKey) {
     }
 }
 
-// Connexion à la base de données MySQL
-$servername = "127.0.0.1";
-$username = "root";
-$password = "";
-$dbname = "lions_pub_nikita";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
-$data = [];
-
-$tables = ['societe_info_competitor', 'societe_info_vape_competitor'];
-
-foreach ($tables as $table) {
-    $sql = "SELECT * FROM $table";
-    $result = $conn->query($sql);
-
-    if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            // Assurez-vous que $row['rue'], $row['code_postal'], $row['ville'] contiennent l'adresse à géocoder
-            $address = $row['rue'] . ', ' . $row['code_postal'] . ' ' . $row['ville'];
-            $geocodedData = geocodeAddress($address, $apiKey);
-            if ($geocodedData) {
-                $row['lat'] = $geocodedData['lat'];
-                $row['long'] = $geocodedData['long'];
-                $row['formatted'] = $geocodedData['formatted'];
-            }
-            $data[$table][] = $row;
-        }
+// Vérifie si le paramètre 'table' est présent dans l'URL
+if (isset($_GET['table'])) {
+    $table = $_GET['table'];
+    
+    // Connexion à la base de données MySQL
+    $servername = "127.0.0.1";
+    $username = "root";
+    $password = "";
+    $dbname = "lions_pub_nikita";
+    
+    $conn = new mysqli($servername, $username, $password, $dbname);
+    
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
     }
+    
+    $data = [];
+    
+    // Vérification de la table demandée
+    $allowed_tables = ['societe_info_competitor', 'societe_info_vape_competitor'];
+    if (in_array($table, $allowed_tables)) {
+        $sql = "SELECT * FROM $table";
+        $result = $conn->query($sql);
+        
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                // Assurez-vous que $row['rue'], $row['code_postal'], $row['ville'] contiennent l'adresse à géocoder
+                $address = $row['rue'] . ', ' . $row['code_postal'] . ' ' . $row['ville'];
+                $geocodedData = geocodeAddress($address, $apiKey);
+                if ($geocodedData) {
+                    $row['lat'] = $geocodedData['lat'];
+                    $row['long'] = $geocodedData['long'];
+                    $row['formatted'] = $geocodedData['formatted'];
+                }
+                $data[] = $row;
+            }
+            echo json_encode($data);
+        } else {
+            echo json_encode(['error' => 'Aucune donnée trouvée pour cette table.']);
+        }
+    } else {
+        echo json_encode(['error' => 'Table non autorisée.']);
+    }
+    
+    $conn->close();
+} else {
+    echo json_encode(['error' => 'Paramètre "table" manquant dans l\'URL.']);
 }
-
-echo json_encode($data);
-
-$conn->close();
 ?>
