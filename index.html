@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,50 +13,88 @@
             padding: 0;
             display: flex;
         }
-        .sidebar {
-            background-color: #007bff; /* couleur bleue */
-            color: #fff; /* texte blanc */
-            width: 200px; /* largeur de la barre latérale */
-            height: 100vh; /* pleine hauteur de la fenêtre */
+        .header {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            padding-top: 20px;
+            background-color: #0d47a1; /* Couleur "braves navy" */
+            color: white;
+            padding: 10px;
+            height: 100vh; /* Hauteur de la fenêtre */
+            width: 200px; /* Largeur du bandeau */
         }
-        .sidebar a {
+        #map {
+            height: 600px;
+            width: 100%;
+        }
+        #legend {
+            padding: 10px;
+        }
+        #table {
+            display: none;
+            height: 600px;
+            width: 100%;
+            overflow-y: scroll;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        .dropdown {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+        .dropdown-content button {
+            color: black;
+            padding: 12px 16px;
             text-decoration: none;
-            color: #fff;
-            margin: 10px 0;
-            padding: 10px 20px;
-            border-radius: 5px;
-            transition: background-color 0.3s;
             display: block;
+            width: 100%;
+            text-align: left;
+            background: none;
+            border: none;
+            cursor: pointer;
         }
-        .sidebar a:hover {
-            background-color: #0056b3; /* couleur bleue foncée au survol */
+        .dropdown-content button:hover {
+            background-color: #f1f1f1;
         }
         .title {
             font-size: 24px;
-            margin-bottom: 20px;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <div class="sidebar">
-        <a href="#" onclick="showMap()">Afficher Carte</a>
-        <label for="boardGameCheckbox">
-            <input type="checkbox" id="boardGameCheckbox" checked> Board Game
-        </label>
-        <label for="vapeStoreCheckbox">
-            <input type="checkbox" id="vapeStoreCheckbox" checked> Vape Store
-        </label>
-        <label for="lionCheckbox">
-            <input type="checkbox" id="lionCheckbox" checked> Lion
-        </label>
+    <div class="header">
+        <button onclick="showMap()">Afficher la carte</button>
+        <button onclick="showTable('societe_info_competitor')">Bord Game</button>
+        <button onclick="showTable('societe_info_vape_competitor')">Vape Store</button>
     </div>
     <div class="content">
         <h1 class="title">Présentation visuelle de la concurrence</h1>
         <div id="map"></div>
+        <div id="legend">
+            <input type="checkbox" id="boardGameCheckbox" checked>
+            <label for="boardGameCheckbox">Bord Game</label>
+            <input type="checkbox" id="vapeStoreCheckbox" checked>
+            <label for="vapeStoreCheckbox">Vape Store</label>
+            <input type="checkbox" id="lionCheckbox" checked>
+            <label for="lionCheckbox">Lion</label>
+        </div>
         <div id="table">
             <table>
                 <thead>
@@ -149,11 +187,6 @@
 
         document.getElementById('lionCheckbox').addEventListener('change', function() {
             toggleMarkers('lion', this.checked);
-            if (this.checked) {
-                lionMarker.addTo(map);
-            } else {
-                map.removeLayer(lionMarker);
-            }
         });
 
         function showMap() {
