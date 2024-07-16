@@ -195,12 +195,14 @@
         function showMap() {
             document.getElementById("map").style.display = "block";
             document.getElementById("table").style.display = "none";
+            document.getElementById("legend").style.display = "block";
             document.getElementById("mapTitle").style.display = "block";
         }
 
         function showTable(type) {
             document.getElementById("map").style.display = "none";
             document.getElementById("table").style.display = "block";
+            document.getElementById("legend").style.display = "none";
             document.getElementById("mapTitle").style.display = "none";
             var data;
             if (type === 'societe_info_competitor') {
