@@ -9,58 +9,17 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
         }
-        .header {
-            display: flex;
-            flex-direction: column;
-            background-color: #0d47a1; /* Couleur "braves navy" */
-            color: white;
-            padding: 10px;
-            height: 100vh; /* Hauteur de la fenêtre */
-            width: 200px; /* Largeur du bandeau */
-            justify-content: space-between; /* Pour espacer les éléments verticalement */
-        }
-        .btn {
-            text-decoration: none;
-            padding: 8px 12px; /* Ajustement de la taille des boutons */
-            font-family: arial;
-            font-size: 0.9em; /* Ajustement de la taille du texte */
-            color: #FFFFFF;
-            background-color: #e5b9b7;
-            border-radius: 24px;
-            -webkit-border-radius: 24px;
-            -moz-border-radius: 24px;
-            border: 4px solid #d99694;
-            box-shadow: 3px 3px 12px #e5b9b7;
-            -webkit-box-shadow: 3px 3px 12px #e5b9b7;
-            -moz-box-shadow: 3px 3px 12px #e5b9b7;
-            margin-bottom: 10px;
-            display: block;
-            width: 100%;
-            text-align: center;
-        }
-
-        .btn:hover {
-            padding: 8px 12px; /* Ajustement de la taille des boutons au survol */
-            box-shadow: 1px 1px 4px #e5b9b7;
-            -webkit-box-shadow: 1px 1px 4px #e5b9b7;
-            -moz-box-shadow: 1px 1px 4px #e5b9b7;
-        }
-
         #map {
-            flex: 1; /* Utilisation de tout l'espace disponible */
-            height: calc(100vh - 20px); /* Hauteur de la carte ajustée */
+            height: 600px;
+            width: 100%;
         }
         #legend {
             padding: 10px;
-            margin-top: 10px; /* Espacement du légende par rapport à la carte */
         }
         #table {
             display: none;
-            height: calc(100vh - 20px); /* Hauteur ajustée pour la table */
+            height: 600px;
             width: 100%;
             overflow-y: scroll;
         }
@@ -75,33 +34,66 @@
             padding: 10px;
             text-align: left;
         }
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background-color: #384a5e; /* Couleur de fond bleu "braves navy" */
+            color: #FFFFFF; /* Couleur de texte blanche */
+        }
+        .btn {
+            text-decoration: none;
+            padding: 10px;
+            font-family: Arial, sans-serif;
+            font-size: 1em;
+            color: #FFFFFF;
+            background-color: #8db3e2;
+            border-radius: 20px;
+            -webkit-border-radius: 20px;
+            -moz-border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            margin-right: 10px; /* Espacement entre les boutons */
+        }
+
+        .btn:hover {
+            padding: 10px;
+            border-radius: 24px;
+            -webkit-border-radius: 24px;
+            -moz-border-radius: 24px;
+            background-color: #6b96c9; /* Couleur au survol */
+        }
+
+        .title {
+            font-size: 24px;
+            margin-left: 10px; /* Marge à gauche du titre */
+        }
     </style>
 </head>
 <body>
     <div class="header">
-        <a href="#" class="btn" onclick="showMap()">Afficher la carte</a>
-        <a href="#" class="btn" onclick="showTable('societe_info_competitor')">Board Game</a>
-        <a href="#" class="btn" onclick="showTable('societe_info_vape_competitor')">Vape Store</a>
+        <button class="btn" onclick="showMap()">Afficher la carte</button>
+        <button class="btn" onclick="showTable('societe_info_competitor')">Bord Game</button>
+        <button class="btn" onclick="showTable('societe_info_vape_competitor')">Vape Store</button>
+        <div class="title">Présentation visuelle de la concurrence</div>
     </div>
-    <div class="content">
-        <h1 class="title">Présentation visuelle de la concurrence</h1>
-        <div id="map"></div>
-        <div id="legend">
-            <input type="checkbox" id="boardGameCheckbox" checked>
-            <label for="boardGameCheckbox">Bord Game</label>
-            <input type="checkbox" id="vapeStoreCheckbox" checked>
-            <label for="vapeStoreCheckbox">Vape Store</label>
-            <input type="checkbox" id="lionCheckbox" checked>
-            <label for="lionCheckbox">Lion</label>
-        </div>
-        <div id="table">
-            <table>
-                <thead>
-                    <tr id="table-headers"></tr>
-                </thead>
-                <tbody id="table-body"></tbody>
-            </table>
-        </div>
+    <h1>Carte des établissements concurrents</h1>
+    <div id="map"></div>
+    <div id="legend">
+        <input type="checkbox" id="boardGameCheckbox" checked>
+        <label for="boardGameCheckbox">Bord Game</label>
+        <input type="checkbox" id="vapeStoreCheckbox" checked>
+        <label for="vapeStoreCheckbox">Vape Store</label>
+        <input type="checkbox" id="lionCheckbox" checked>
+        <label for="lionCheckbox">Lion</label>
+    </div>
+    <div id="table">
+        <table>
+            <thead>
+                <tr id="table-headers"></tr>
+            </thead>
+            <tbody id="table-body"></tbody>
+        </table>
     </div>
     <script>
         var map = L.map('map').setView([48.897891998291016, 2.0886409282684326], 12);
@@ -187,6 +179,15 @@
         document.getElementById('lionCheckbox').addEventListener('change', function() {
             toggleMarkers('lion', this.checked);
         });
+
+        function toggleDropdown() {
+            var dropdownContent = document.getElementById("dropdown-content");
+            if (dropdownContent.style.display === "none" || dropdownContent.style.display === "") {
+                dropdownContent.style.display = "block";
+            } else {
+                dropdownContent.style.display = "none";
+            }
+        }
 
         function showMap() {
             document.getElementById("map").style.display = "block";
