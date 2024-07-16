@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/vendor/autoload.php'; // Inclut le chargeur automatique de Composer
+require 'C:/xampp/htdocs/map_competitor/vendor/autoload.php';
 
 use OpenCage\Geocoder\Geocoder;
 
