@@ -38,47 +38,22 @@
             display: flex;
             align-items: center;
             padding: 10px;
-            background-color: #8db3e2; /* Couleur de fond bleu Braves Navy */
-        }
-        .dropdown {
-            position: relative;
-            margin-right: 20px;
-        }
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            background-color: #f9f9f9;
-            min-width: 160px;
-            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-            z-index: 1;
-        }
-        .dropdown-content button {
-            color: black;
-            padding: 12px 16px;
-            text-decoration: none;
-            display: block;
-            width: 100%;
-            text-align: left;
-            background: none;
-            border: none;
-            cursor: pointer;
-        }
-        .dropdown-content button:hover {
-            background-color: #f1f1f1;
-        }
-        .title {
-            font-size: 24px;
+            background-color: #384a5e; /* Couleur de fond bleu "braves navy" */
+            color: #FFFFFF; /* Couleur de texte blanche */
         }
         .btn {
             text-decoration: none;
             padding: 10px;
-            font-family: Arial;
+            font-family: Arial, sans-serif;
             font-size: 1em;
             color: #FFFFFF;
             background-color: #8db3e2;
             border-radius: 20px;
             -webkit-border-radius: 20px;
             -moz-border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            margin-right: 10px; /* Espacement entre les boutons */
         }
 
         .btn:hover {
@@ -86,26 +61,27 @@
             border-radius: 24px;
             -webkit-border-radius: 24px;
             -moz-border-radius: 24px;
+            background-color: #6b96c9; /* Couleur au survol */
+        }
+
+        .title {
+            font-size: 24px;
+            margin-left: 10px; /* Marge à gauche du titre */
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <div class="dropdown">
-            <button onclick="toggleDropdown()">Menu</button>
-            <div id="dropdown-content" class="dropdown-content">
-                <button onclick="showMap()">Afficher la carte</button>
-                <button onclick="showTable('societe_info_competitor')">Board Game</button>
-                <button onclick="showTable('societe_info_vape_competitor')">Vape Store</button>
-            </div>
-        </div>
+        <button class="btn" onclick="showMap()">Afficher la carte</button>
+        <button class="btn" onclick="showTable('societe_info_competitor')">Bord Game</button>
+        <button class="btn" onclick="showTable('societe_info_vape_competitor')">Vape Store</button>
         <div class="title">Présentation visuelle de la concurrence</div>
     </div>
     <h1>Carte des établissements concurrents</h1>
     <div id="map"></div>
     <div id="legend">
         <input type="checkbox" id="boardGameCheckbox" checked>
-        <label for="boardGameCheckbox">Board Game</label>
+        <label for="boardGameCheckbox">Bord Game</label>
         <input type="checkbox" id="vapeStoreCheckbox" checked>
         <label for="vapeStoreCheckbox">Vape Store</label>
         <input type="checkbox" id="lionCheckbox" checked>
