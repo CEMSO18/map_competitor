@@ -21,12 +21,13 @@
             padding: 10px;
             height: 100vh; /* Hauteur de la fenêtre */
             width: 200px; /* Largeur du bandeau */
+            justify-content: space-between; /* Pour espacer les éléments verticalement */
         }
         .header a.btn {
             text-decoration: none;
-            padding: 10px;
+            padding: 8px 12px; /* Ajustement de la taille des boutons */
             font-family: arial;
-            font-size: 1em;
+            font-size: 0.9em; /* Ajustement de la taille du texte */
             color: #FFFFFF;
             background-color: #e5b9b7;
             border-radius: 24px;
@@ -43,22 +44,23 @@
         }
 
         .header a.btn:hover {
-            padding: 10px;
+            padding: 8px 12px; /* Ajustement de la taille des boutons au survol */
             box-shadow: 1px 1px 4px #e5b9b7;
             -webkit-box-shadow: 1px 1px 4px #e5b9b7;
             -moz-box-shadow: 1px 1px 4px #e5b9b7;
         }
 
         #map {
-            height: 600px;
-            width: 100%;
+            flex: 1; /* Utilisation de tout l'espace disponible */
+            height: calc(100vh - 20px); /* Hauteur de la carte ajustée */
         }
         #legend {
             padding: 10px;
+            margin-top: 10px; /* Espacement du légende par rapport à la carte */
         }
         #table {
             display: none;
-            height: 600px;
+            height: calc(100vh - 20px); /* Hauteur ajustée pour la table */
             width: 100%;
             overflow-y: scroll;
         }
