@@ -132,9 +132,9 @@
         });
 
         var markers = {
-            boardGame: L.layerGroup(), // Utilisation de L.layerGroup pour les marqueurs bordGame
-            vapeStore: L.layerGroup(), // Utilisation de L.layerGroup pour les marqueurs vapeStore
-            lion: L.layerGroup() // Utilisation de L.layerGroup pour les marqueurs lions
+            boardGame: [],
+            vapeStore: [],
+            lion: []
         };
 
         function fetchData(table) {
@@ -157,23 +157,20 @@
             data.forEach(function(item) {
                 var marker = L.marker([item.lat, item.long], {icon: icon})
                     .bindPopup(item.name + "<br>" + item.formatted + "<br>" + item.site_web + "<br>" + "CA :" + item.ca_dernier + "€" );
+                marker.addTo(map);
                 markerList.push(marker);
             });
             return markerList;
         }
 
         function toggleMarkers(type, show) {
-            markers[type].clearLayers(); // Efface les marqueurs existants dans la couche avant de les ajouter à nouveau
-            markers[type].addTo(map); // Ajoute la couche à la carte
-            if (show) {
-                markers[type].eachLayer(function(layer) {
-                    map.addLayer(layer); // Ajoute chaque marqueur à la carte
-                });
-            } else {
-                markers[type].eachLayer(function(layer) {
-                    map.removeLayer(layer); // Retire chaque marqueur de la carte
-                });
-            }
+            markers[type].forEach(marker => {
+                if (show) {
+                    marker.addTo(map);
+                } else {
+                    map.removeLayer(marker);
+                }
+            });
         }
 
         document.getElementById('boardGameCheckbox').addEventListener('change', function() {
@@ -237,15 +234,15 @@
         fetchData('societe_info_vape_competitor');
 
         // Ajout d'un marqueur rouge pour les coordonnées spécifiques
-        var lionMarker = L.marker([48.897891998291016, 2.0886409282684326], {icon: lionIcon}).addTo(markers.lion)
+        var lionMarker = L.marker([48.897891998291016, 2.0886409282684326], {icon: lionIcon}).addTo(map)
             .bindPopup("<b>The Gentlemen Pubs</b><br><img src='images/lions_pub_full.png' alt='Lions Pub' width='100'>");
 
         // Contrôle initial de l'icône Lion en fonction de l'état initial du checkbox
         document.getElementById('lionCheckbox').addEventListener('change', function() {
             if (this.checked) {
-                map.addLayer(markers.lion);
+                map.addLayer(lionMarker);
             } else {
-                map.removeLayer(markers.lion);
+                map.removeLayer(lionMarker);
             }
         });
 
