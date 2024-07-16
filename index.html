@@ -134,10 +134,8 @@
         var markers = {
             boardGame: [],
             vapeStore: [],
-            lion: []
+            lion: L.layerGroup() // Utilisation de L.layerGroup pour les marqueurs lions
         };
-
-        var lionCheckboxChecked = true; // Variable pour suivre l'état du checkbox Lion
 
         function fetchData(table) {
             fetch(`fetch_data.php?table=${table}`)
@@ -159,7 +157,6 @@
             data.forEach(function(item) {
                 var marker = L.marker([item.lat, item.long], {icon: icon})
                     .bindPopup(item.name + "<br>" + item.formatted + "<br>" + item.site_web + "<br>" + "CA :" + item.ca_dernier + "€" );
-                marker.addTo(map);
                 markerList.push(marker);
             });
             return markerList;
@@ -167,23 +164,20 @@
 
         function toggleMarkers(type, show) {
             if (type === 'lion') {
-                lionCheckboxChecked = show; // Met à jour l'état du checkbox Lion
-            }
-            markers[type].forEach(marker => {
-                if (type === 'lion') {
-                    if (show) {
-                        marker.addTo(map);
-                    } else {
-                        map.removeLayer(marker); // Supprime le marqueur de la carte si le checkbox Lion est décoché
-                    }
+                if (show) {
+                    markers.lion.addTo(map); // Ajoute la couche des lions à la carte
                 } else {
+                    markers.lion.removeFrom(map); // Retire la couche des lions de la carte
+                }
+            } else {
+                markers[type].forEach(marker => {
                     if (show) {
                         marker.addTo(map);
                     } else {
-                        map.removeLayer(marker); // Supprime le marqueur de la carte
+                        map.removeLayer(marker);
                     }
-                }
-            });
+                });
+            }
         }
 
         document.getElementById('boardGameCheckbox').addEventListener('change', function() {
@@ -247,13 +241,18 @@
         fetchData('societe_info_vape_competitor');
 
         // Ajout d'un marqueur rouge pour les coordonnées spécifiques
-        var lionMarker = L.marker([48.897891998291016, 2.0886409282684326], {icon: lionIcon}).addTo(map)
+        var lionMarker = L.marker([48.897891998291016, 2.0886409282684326], {icon: lionIcon}).addTo(markers.lion)
             .bindPopup("<b>The Gentlemen Pubs</b><br><img src='images/lions_pub_full.png' alt='Lions Pub' width='100'>");
 
         // Contrôle initial de l'icône Lion en fonction de l'état initial du checkbox
-        if (!lionCheckboxChecked) {
-            map.removeLayer(lionMarker);
-        }
+        document.getElementById('lionCheckbox').addEventListener('change', function() {
+            if (this.checked) {
+                map.addLayer(markers.lion);
+            } else {
+                map.removeLayer(markers.lion);
+            }
+        });
+
     </script>
 </body>
 </html>
