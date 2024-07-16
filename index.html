@@ -15,20 +15,88 @@
             width: 100%;
             display: none; /* Initial hidden */
         }
-        /* Autres styles ici */
+        #table {
+            display: none;
+            height: 600px;
+            width: 100%;
+            overflow-y: scroll;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+        }
+        .dropdown {
+            position: relative;
+            margin-right: 20px;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+        .dropdown-content button {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            width: 100%;
+            text-align: left;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        .dropdown-content button:hover {
+            background-color: #f1f1f1;
+        }
+        .title {
+            font-size: 24px;
+        }
     </style>
 </head>
 <body>
     <div class="header">
-        <!-- Header HTML ici -->
+        <div class="dropdown">
+            <button onclick="toggleDropdown()">Menu</button>
+            <div id="dropdown-content" class="dropdown-content">
+                <button onclick="showMap()">Afficher la carte</button>
+                <button onclick="showTable('societe_info_competitor')">Bord Game</button>
+                <button onclick="showTable('societe_info_vape_competitor')">Vape Store</button>
+            </div>
+        </div>
+        <div class="title">Présentation visuelle de la concurrence</div>
     </div>
     <h1>Carte des établissements concurrents</h1>
     <div id="map"></div>
     <div id="legend">
-        <!-- Légende des cases à cocher et autres éléments ici -->
+        <input type="checkbox" id="boardGameCheckbox" checked>
+        <label for="boardGameCheckbox">Bord Game</label>
+        <input type="checkbox" id="vapeStoreCheckbox" checked>
+        <label for="vapeStoreCheckbox">Vape Store</label>
+        <input type="checkbox" id="lionCheckbox" checked>
+        <label for="lionCheckbox">Lion</label>
     </div>
     <div id="table">
-        <!-- Tableau HTML ici -->
+        <table>
+            <thead>
+                <tr id="table-headers"></tr>
+            </thead>
+            <tbody id="table-body"></tbody>
+        </table>
     </div>
     <script>
         var map = L.map('map').setView([48.897891998291016, 2.0886409282684326], 12);
@@ -37,7 +105,29 @@
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
-        // Initialisation des icônes ici (customIconPurple, customIconRed, lionIcon)
+        var customIconPurple = L.icon({
+            iconUrl: 'images/tuile_generic_purple.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+        });
+
+        var customIconRed = L.icon({
+            iconUrl: 'images/tuile_generic_red.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+        });
+
+        var lionIcon = L.icon({
+            iconUrl: 'images/tuile_lions.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+        });
 
         var markers = {
             boardGame: [],
@@ -64,14 +154,81 @@
             var markerList = [];
             data.forEach(function(item) {
                 var marker = L.marker([item.lat, item.long], {icon: icon})
-                    .bindPopup(item.name + "<br>" + item.formatted + "<br>" + item.site_web + "<br>" + "CA :" + item.ca_dernier + "€" );
+                    .bindPopup(item.name + "<br>" + item.formatted + "<br>" + item.site_web + "<br>" + "CA: " + item.ca_dernier + "€");
                 marker.addTo(map);
                 markerList.push(marker);
             });
             return markerList;
         }
 
-        // Autres fonctions JavaScript nécessaires ici (toggleMarkers, toggleDropdown, etc.)
+        function toggleMarkers(type, show) {
+            markers[type].forEach(marker => {
+                if (show) {
+                    marker.addTo(map);
+                } else {
+                    map.removeLayer(marker);
+                }
+            });
+        }
+
+        document.getElementById('boardGameCheckbox').addEventListener('change', function() {
+            toggleMarkers('boardGame', this.checked);
+        });
+
+        document.getElementById('vapeStoreCheckbox').addEventListener('change', function() {
+            toggleMarkers('vapeStore', this.checked);
+        });
+
+        document.getElementById('lionCheckbox').addEventListener('change', function() {
+            toggleMarkers('lion', this.checked);
+        });
+
+        function toggleDropdown() {
+            var dropdownContent = document.getElementById("dropdown-content");
+            if (dropdownContent.style.display === "none" || dropdownContent.style.display === "") {
+                dropdownContent.style.display = "block";
+            } else {
+                dropdownContent.style.display = "none";
+            }
+        }
+
+        function showMap() {
+            document.getElementById("map").style.display = "block";
+            document.getElementById("table").style.display = "none";
+            toggleMarkers('boardGame', document.getElementById('boardGameCheckbox').checked);
+            toggleMarkers('vapeStore', document.getElementById('vapeStoreCheckbox').checked);
+            toggleMarkers('lion', document.getElementById('lionCheckbox').checked);
+        }
+
+        function showTable(table) {
+            document.getElementById("map").style.display = "none";
+            document.getElementById("table").style.display = "block";
+            fetchData(table);
+        }
+
+        function createTableHeaders(headers) {
+            const tableHeaders = document.getElementById('table-headers');
+            tableHeaders.innerHTML = '';
+            headers.forEach(header => {
+                const th = document.createElement('th');
+                th.textContent = header;
+                tableHeaders.appendChild(th);
+            });
+        }
+
+        function createTableRows(rows) {
+            const tableBody = document.getElementById('table-body');
+            tableBody.innerHTML = '';
+            rows.forEach(row => {
+                const tr = document.createElement('tr');
+                Object.values(row).forEach(value => {
+                    const td = document.createElement('td');
+                    td.textContent = value;
+                    tr.appendChild(td);
+                });
+                tableBody.appendChild(tr);
+            });
+        }
 
         // Initial fetch of data
         fetchData('societe_info_competitor');
