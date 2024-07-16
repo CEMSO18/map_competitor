@@ -73,11 +73,11 @@
 <body>
     <div class="header">
         <button class="btn" onclick="showMap()">Afficher la carte</button>
-        <button class="btn" onclick="showTable('societe_info_competitor')">Bord Game</button>
+        <button class="btn" onclick="showTable('societe_info_competitor')">Board Game</button>
         <button class="btn" onclick="showTable('societe_info_vape_competitor')">Vape Store</button>
         <div class="title">Présentation visuelle de la concurrence</div>
     </div>
-    <h1>Carte des établissements concurrents</h1>
+    <h1 id="mapTitle">Carte des établissements concurrents</h1>
     <div id="map"></div>
     <div id="legend">
         <input type="checkbox" id="boardGameCheckbox" checked>
@@ -192,11 +192,13 @@
         function showMap() {
             document.getElementById("map").style.display = "block";
             document.getElementById("table").style.display = "none";
+            document.getElementById("mapTitle").style.display = "block";
         }
 
         function showTable(table) {
             document.getElementById("map").style.display = "none";
             document.getElementById("table").style.display = "block";
+            document.getElementById("mapTitle").style.display = "none";
             fetchData(table);
         }
 
