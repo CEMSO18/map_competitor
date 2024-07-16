@@ -25,48 +25,55 @@ function geocodeAddress($address, $apiKey) {
     }
 }
 
-if (isset($_GET['table'])) {
-    $table = $_GET['table'];
-    
-    $servername = "127.0.0.1";
-    $username = "root";
-    $password = "";
-    $dbname = "lions_pub_nikita";
-    
-    $conn = new mysqli($servername, $username, $password, $dbname);
-    
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
-    
+function fetchDataFromTable($table, $apiKey, $conn) {
     $data = [];
+    $sql = "SELECT * FROM $table";
+    $result = $conn->query($sql);
     
-    $allowed_tables = ['societe_info_competitor', 'societe_info_vape_competitor'];
-    if (in_array($table, $allowed_tables)) {
-        $sql = "SELECT * FROM $table";
-        $result = $conn->query($sql);
-        
-        if ($result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
-                $address = $row['rue'] . ', ' . $row['code_postal'] . ' ' . $row['ville'];
-                $geocodedData = geocodeAddress($address, $apiKey);
-                if ($geocodedData) {
-                    $row['lat'] = $geocodedData['lat'];
-                    $row['long'] = $geocodedData['long'];
-                    $row['formatted'] = $geocodedData['formatted'];
-                }
-                $data[] = $row;
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $address = $row['rue'] . ', ' . $row['code_postal'] . ' ' . $row['ville'];
+            $geocodedData = geocodeAddress($address, $apiKey);
+            if ($geocodedData) {
+                $row['lat'] = $geocodedData['lat'];
+                $row['long'] = $geocodedData['long'];
+                $row['formatted'] = $geocodedData['formatted'];
             }
-            echo json_encode(['success' => true, 'data' => $data]);
-        } else {
-            echo json_encode(['success' => false, 'error' => 'Aucune donnée trouvée pour cette table.']);
+            $data[] = $row;
         }
-    } else {
-        echo json_encode(['success' => false, 'error' => 'Table non autorisée.']);
     }
     
-    $conn->close();
-} else {
-    echo json_encode(['success' => false, 'error' => 'Paramètre "table" manquant dans l\'URL.']);
+    return $data;
 }
+
+$servername = "127.0.0.1";
+$username = "root";
+$password = "";
+$dbname = "lions_pub_nikita";
+
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+$results = [];
+
+$tables = ['societe_info_competitor', 'societe_info_vape_competitor'];
+foreach ($tables as $table) {
+    $tableData = fetchDataFromTable($table, $apiKey, $conn);
+    if ($table == 'societe_info_competitor') {
+        $results['results_societe_info_competitor'] = $tableData;
+    } else if ($table == 'societe_info_vape_competitor') {
+        $results['results_societe_info_vape_competitor'] = $tableData;
+    }
+}
+
+if (!empty($results)) {
+    echo json_encode(['success' => true, 'data' => $results]);
+} else {
+    echo json_encode(['success' => false, 'error' => 'Aucune donnée trouvée pour les tables spécifiées.']);
+}
+
+$conn->close();
 ?>
