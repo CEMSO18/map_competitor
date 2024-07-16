@@ -183,15 +183,6 @@
             toggleMarkers('lion', this.checked);
         });
 
-        function toggleDropdown() {
-            var dropdownContent = document.getElementById("dropdown-content");
-            if (dropdownContent.style.display === "none" || dropdownContent.style.display === "") {
-                dropdownContent.style.display = "block";
-            } else {
-                dropdownContent.style.display = "none";
-            }
-        }
-
         function showMap() {
             document.getElementById("map").style.display = "block";
             document.getElementById("table").style.display = "none";
@@ -204,14 +195,17 @@
             document.getElementById("table").style.display = "block";
             document.getElementById("legend").style.display = "none";
             document.getElementById("mapTitle").style.display = "none";
-            var data;
-            if (type === 'societe_info_competitor') {
-                data = markers.boardGame;
-            } else if (type === 'societe_info_vape_competitor') {
-                data = markers.vapeStore;
-            }
-            createTableHeaders(Object.keys(data[0].options.icon.options));
-            createTableRows(data);
+            fetch(`fetch_${type}.php`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        createTableHeaders(Object.keys(data.data[0]));
+                        createTableRows(data.data);
+                    } else {
+                        console.error('Error:', data.error);
+                    }
+                })
+                .catch(error => console.error('Error fetching data:', error));
         }
 
         function createTableHeaders(headers) {
@@ -229,7 +223,7 @@
             tableBody.innerHTML = '';
             rows.forEach(row => {
                 const tr = document.createElement('tr');
-                Object.values(row.options.icon.options).forEach(value => {
+                Object.values(row).forEach(value => {
                     const td = document.createElement('td');
                     td.textContent = value;
                     tr.appendChild(td);
