@@ -14,6 +14,9 @@
             height: 600px;
             width: 100%;
         }
+        #legend {
+            padding: 10px;
+        }
         #table {
             display: none;
             height: 600px;
@@ -23,7 +26,6 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
         }
         table, th, td {
             border: 1px solid black;
@@ -154,7 +156,7 @@
             var markerList = [];
             data.forEach(function(item) {
                 var marker = L.marker([item.lat, item.long], {icon: icon})
-                    .bindPopup(item.name + "<br>" + item.formatted + "<br>" + item.site_web + "<br>" + "CA: " + item.ca_dernier + "€");
+                    .bindPopup(item.name + "<br>" + item.formatted + "<br>" + item.site_web + "<br>" + "CA :" + item.ca_dernier + "€" );
                 marker.addTo(map);
                 markerList.push(marker);
             });
@@ -166,7 +168,7 @@
                 if (show) {
                     marker.addTo(map);
                 } else {
-                    map.removeLayer(marker);
+                    map.removeLayer(marker); // Supprime le marqueur de la carte
                 }
             });
         }
@@ -195,9 +197,6 @@
         function showMap() {
             document.getElementById("map").style.display = "block";
             document.getElementById("table").style.display = "none";
-            toggleMarkers('boardGame', document.getElementById('boardGameCheckbox').checked);
-            toggleMarkers('vapeStore', document.getElementById('vapeStoreCheckbox').checked);
-            toggleMarkers('lion', document.getElementById('lionCheckbox').checked);
         }
 
         function showTable(table) {
