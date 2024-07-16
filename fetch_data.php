@@ -3,7 +3,6 @@ require 'C:/xampp/htdocs/map_competitor/vendor/autoload.php';
 
 use OpenCage\Geocoder\Geocoder;
 
-// Récupère la clé API depuis une variable d'environnement
 $apiKey = 'efd17e46c9324adfbd1f7d1e04995748'; // Clé API OpenCage
 
 function geocodeAddress($address, $apiKey) {
@@ -18,7 +17,7 @@ function geocodeAddress($address, $apiKey) {
                 'formatted' => $firstResult['formatted'],
             ];
         } else {
-            return null; // Retourne null si aucun résultat trouvé
+            return null;
         }
     } catch (Exception $e) {
         error_log('Error geocoding address: ' . $e->getMessage());
@@ -26,11 +25,9 @@ function geocodeAddress($address, $apiKey) {
     }
 }
 
-// Vérifie si le paramètre 'table' est présent dans l'URL
 if (isset($_GET['table'])) {
     $table = $_GET['table'];
     
-    // Connexion à la base de données MySQL
     $servername = "127.0.0.1";
     $username = "root";
     $password = "";
@@ -44,7 +41,6 @@ if (isset($_GET['table'])) {
     
     $data = [];
     
-    // Vérification de la table demandée
     $allowed_tables = ['societe_info_competitor', 'societe_info_vape_competitor'];
     if (in_array($table, $allowed_tables)) {
         $sql = "SELECT * FROM $table";
@@ -52,7 +48,6 @@ if (isset($_GET['table'])) {
         
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
-                // Assurez-vous que $row['rue'], $row['code_postal'], $row['ville'] contiennent l'adresse à géocoder
                 $address = $row['rue'] . ', ' . $row['code_postal'] . ' ' . $row['ville'];
                 $geocodedData = geocodeAddress($address, $apiKey);
                 if ($geocodedData) {
@@ -62,16 +57,16 @@ if (isset($_GET['table'])) {
                 }
                 $data[] = $row;
             }
-            echo json_encode($data);
+            echo json_encode(['success' => true, 'data' => $data]);
         } else {
-            echo json_encode(['error' => 'Aucune donnée trouvée pour cette table.']);
+            echo json_encode(['success' => false, 'error' => 'Aucune donnée trouvée pour cette table.']);
         }
     } else {
-        echo json_encode(['error' => 'Table non autorisée.']);
+        echo json_encode(['success' => false, 'error' => 'Table non autorisée.']);
     }
     
     $conn->close();
 } else {
-    echo json_encode(['error' => 'Paramètre "table" manquant dans l\'URL.']);
+    echo json_encode(['success' => false, 'error' => 'Paramètre "table" manquant dans l\'URL.']);
 }
 ?>
