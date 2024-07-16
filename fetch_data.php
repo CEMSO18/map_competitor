@@ -3,8 +3,11 @@ require 'C:/xampp/htdocs/map_competitor/vendor/autoload.php';
 
 use OpenCage\Geocoder\Geocoder;
 
-function geocodeAddress($address) {
-    $geocoder = new Geocoder('efd17e46c9324adfbd1f7d1e04995748'); // Remplacez par votre clé API OpenCage
+// Récupère la clé API depuis une variable d'environnement
+$apiKey = 'efd17e46c9324adfbd1f7d1e04995748'; // Clé API OpenCage
+
+function geocodeAddress($address, $apiKey) {
+    $geocoder = new Geocoder($apiKey);
     try {
         $result = $geocoder->geocode($address);
         if ($result && $result['total_results'] > 0) {
@@ -45,7 +48,8 @@ foreach ($tables as $table) {
 
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
-            $geocodedData = geocodeAddress($row['address']);
+            // Assurez-vous que $row['address'] contient l'adresse à géocoder
+            $geocodedData = geocodeAddress($row['address'], $apiKey);
             if ($geocodedData) {
                 $row['lat'] = $geocodedData['lat'];
                 $row['long'] = $geocodedData['long'];
