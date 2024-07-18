@@ -196,7 +196,7 @@
                     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 }).addTo(map);
 
-                var lionMarker = L.marker([48.89810237251481, 2.088903849646817], {icon: lionIcon}).addTo(map)
+                var lionMarker = L.marker([48.89810237251481, 2.088903849646817], {icon: lionIcon}, zIndexOffset: 1000).addTo(map)
                     .bindPopup("<b>The Gentlemen's Pub</b><br><img src='images/lions_pub_full.png' alt='Lions Pub' width='100'>");
 
                 // Contrôler l'icône du Lion en fonction de l'état initial de la case à cocher
