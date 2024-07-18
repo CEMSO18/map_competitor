@@ -12,7 +12,6 @@
             margin: 0;
             padding: 0;
             background: #ffffff; /* Couleur de fond par défaut (clair) */
-            color: #000000; /* Couleur de texte par défaut */
             transition: background-color 0.3s, color 0.3s;
         }
 
@@ -113,26 +112,6 @@
             display: block;
         }
 
-        /* Styles pour les tables */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            padding: 10px;
-            border: 1px solid #ddd;
-        }
-
-        th {
-            background-color: #f4f4f4;
-        }
-
-        /* Adjust styles for iframe */
-        iframe {
-            width: 100%;
-            border: none;
-        }
     </style>
 </head>
 <body>
@@ -154,9 +133,9 @@
         <button class="btn" onclick="showTable('societe_info_gameBar_competitor')">Game Bar</button>
     </div>
 
-    <iframe id="historyFrame" src="history.html" style="display: none; height: 1500px;"></iframe>
-    <iframe id="marketAnalysisFrame" src="market_analysis.html" style="display: none; height: 1500px;"></iframe>
-    <iframe id="activitiesSkillsFrame" src="activities_skills.html" style="display: none; height: 1500px;"></iframe>
+    <iframe id="historyFrame" src="history.html" style="display: none; width: 100%; height: 1500px; border: none;"></iframe>
+    <iframe id="marketAnalysisFrame" src="market_analysis.html" style="display: none; width: 100%; height: 1500px; border: none;"></iframe>
+    <iframe id="activitiesSkillsFrame" src="activities_skills.html" style="display: none; width: 100%; height: 1500px; border: none;"></iframe>
     
     <h1 id="mapTitle">Carte des établissements concurrents</h1>
     <div id="legend" style="display: block;">
@@ -179,35 +158,10 @@
         </table>
     </div>
     <script>
-        // Fonction pour appliquer le thème au chargement de la page
-        function applyTheme() {
-            const themeToggle = document.getElementById('themeToggle');
-            if (localStorage.getItem('dark-mode') === 'enabled') {
-                document.body.classList.add('dark-theme');
-                themeToggle.checked = true;
-            } else {
-                document.body.classList.add('light-theme');
-                themeToggle.checked = false;
-            }
-        }
-
         // Gestion du changement de thème
         document.getElementById('themeToggle').addEventListener('change', function() {
-            if (this.checked) {
-                document.body.classList.add('dark-theme');
-                document.body.classList.remove('light-theme');
-                localStorage.setItem('dark-mode', 'enabled');
-            } else {
-                document.body.classList.add('light-theme');
-                document.body.classList.remove('dark-theme');
-                localStorage.setItem('dark-mode', 'disabled');
-            }
-        });
-
-        // Initialiser le thème lors du chargement de la page
-        document.addEventListener('DOMContentLoaded', function() {
-            applyTheme();
-            showMap(); // Initialise la carte lors du chargement de la page
+            document.body.classList.toggle('dark-theme', this.checked);
+            document.body.classList.toggle('light-theme', !this.checked);
         });
 
         var map = null; // Déclaration de la variable pour la carte
@@ -236,87 +190,282 @@
             shadowSize: [41, 41]
         });
 
+        var lionIcon = L.icon({
+            iconUrl: 'images/tuile_lions.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+        });
+
+        var markers = {
+            boardGame: [],
+            vapeStore: [],
+            gameBar: [],
+            lion: []
+        };
+
+        // Variables globales pour les données préchargées
+        var preloadedData = {
+            societe_info_competitor: [],
+            societe_info_vape_competitor: [],
+            societe_info_gameBar_competitor: []
+        };
+
+        function fetchData() {
+            fetch('fetch_data.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        preloadedData.societe_info_competitor = data.data.results_societe_info_competitor;
+                        preloadedData.societe_info_vape_competitor = data.data.results_societe_info_vape_competitor;
+                        preloadedData.societe_info_gameBar_competitor = data.data.results_societe_info_gameBar_competitor;
+
+                        addMarkers(preloadedData.societe_info_competitor, customIconPurple, 'boardGame');
+                        addMarkers(preloadedData.societe_info_vape_competitor, customIconRed, 'vapeStore');
+                        addMarkers(preloadedData.societe_info_gameBar_competitor, customIconBlue, 'gameBar');
+                    } else {
+                        console.error('Error:', data.error);
+                    }
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
+
+        function addMarkers(data, icon, type) {
+            data.forEach(item => {
+                var marker = L.marker([item.lat, item.long], {icon: icon})
+                    .bindPopup(item.name + "<br>" + item.formatted + "<br>" + "CA :" + item.ca_dernier + "€" );
+                marker.addTo(map);
+                markers[type].push(marker);
+            });
+        }
+
+        function toggleMarkers(type, show) {
+            markers[type].forEach(marker => {
+                if (show) {
+                    marker.addTo(map);
+                } else {
+                    map.removeLayer(marker);
+                }
+            });
+        }
+
         function showMap() {
-            document.getElementById('map').style.display = 'block';
-            document.getElementById('table').style.display = 'none';
-            if (map === null) {
-                map = L.map('map').setView([51.505, -0.09], 13);
+            // Vérifie si la carte n'est pas déjà initialisée
+            if (!map) {
+                map = L.map('map').setView([48.897891998291016, 2.0886409282684326], 12);
+
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '© OpenStreetMap contributors'
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 }).addTo(map);
-                // Ajouter les marqueurs de la carte ici...
+
+                var lionMarker = L.marker([48.89810237251481, 2.088903849646817], {icon: lionIcon, zIndexOffset: 1000}).addTo(map)
+                    .bindPopup("<b>The Gentlemen's Pub</b><br><img src='images/lions_pub_full.png' alt='Lions Pub' width='100'>");
+
+                // Contrôler l'icône du Lion en fonction de l'état initial de la case à cocher
+                document.getElementById('lionCheckbox').addEventListener('change', function() {
+                    if (this.checked) {
+                        map.addLayer(lionMarker);
+                    } else {
+                        map.removeLayer(lionMarker);
+                    }
+                });
+
+                // Afficher les marqueurs pour les types sélectionnés
+                var boardGameCheckbox = document.getElementById('boardGameCheckbox');
+                var vapeStoreCheckbox = document.getElementById('vapeStoreCheckbox');
+                var gameBarCheckbox = document.getElementById('gameBarCheckbox');
+
+                boardGameCheckbox.addEventListener('change', function() {
+                    toggleMarkers('boardGame', this.checked);
+                });
+
+                vapeStoreCheckbox.addEventListener('change', function() {
+                    toggleMarkers('vapeStore', this.checked);
+                });
+
+                gameBarCheckbox.addEventListener('change', function() {
+                    toggleMarkers('gameBar', this.checked);
+                });
+
+            }
+
+            // Afficher la carte et masquer les autres éléments
+            document.getElementById("map").style.display = "block";
+            document.getElementById("table").style.display = "none";
+            document.getElementById("legend").style.display = "block";
+            document.getElementById("mapTitle").style.display = "block";
+            var marketAnalysisFrame = document.getElementById('marketAnalysisFrame');
+            if (marketAnalysisFrame) {
+                marketAnalysisFrame.style.display = 'none';
+            }
+            var activitiesSkillsFrame = document.getElementById('activitiesSkillsFrame');
+            if (activitiesSkillsFrame) {
+                activitiesSkillsFrame.style.display = 'none';
+            }
+            var historyFrame = document.getElementById('historyFrame');
+            if (historyFrame) {
+                historyFrame.style.display = 'none';
+            }
+
+            // Supprimer la classe 'home' pour ne pas afficher l'image de fond
+            document.body.classList.remove('home');
+        }
+
+        function showTable(type) {
+            document.getElementById("map").style.display = "none";
+            document.getElementById("table").style.display = "block";
+            document.getElementById("legend").style.display = "none";
+            document.getElementById("mapTitle").style.display = "none";
+            var marketAnalysisFrame = document.getElementById('marketAnalysisFrame');
+            if (marketAnalysisFrame) {
+                marketAnalysisFrame.style.display = 'none';
+            }
+            var activitiesSkillsFrame = document.getElementById('activitiesSkillsFrame');
+            if (activitiesSkillsFrame) {
+                activitiesSkillsFrame.style.display = 'none';
+            }
+            var historyFrame = document.getElementById('historyFrame');
+            if (historyFrame) {
+                historyFrame.style.display = 'none';
+            }
+
+            // Utiliser les données préchargées
+            const data = preloadedData[type];
+            if (data && data.length > 0) {
+                createTableHeaders(Object.keys(data[0]));
+                createTableRows(data);
+            } else {
+                console.error('No data available for:', type);
             }
         }
 
-        function showTable(tableId) {
-            document.getElementById('map').style.display = 'none';
-            document.getElementById('table').style.display = 'block';
-            document.getElementById('historyFrame').style.display = 'none';
-            document.getElementById('marketAnalysisFrame').style.display = 'none';
-            document.getElementById('activitiesSkillsFrame').style.display = 'none';
-
-            fetch('table_data/' + tableId + '.json')
-                .then(response => response.json())
-                .then(data => {
-                    const tableHeaders = document.getElementById('table-headers');
-                    const tableBody = document.getElementById('table-body');
-
-                    // Clear existing content
-                    tableHeaders.innerHTML = '';
-                    tableBody.innerHTML = '';
-
-                    // Add headers
-                    const headers = Object.keys(data[0]);
-                    headers.forEach(header => {
-                        const th = document.createElement('th');
-                        th.textContent = header;
-                        tableHeaders.appendChild(th);
-                    });
-
-                    // Add rows
-                    data.forEach(row => {
-                        const tr = document.createElement('tr');
-                        headers.forEach(header => {
-                            const td = document.createElement('td');
-                            td.textContent = row[header];
-                            tr.appendChild(td);
-                        });
-                        tableBody.appendChild(tr);
-                    });
-                });
+        function createTableHeaders(headers) {
+            const tableHeaders = document.getElementById('table-headers');
+            tableHeaders.innerHTML = '';
+            headers.forEach(header => {
+                const th = document.createElement('th');
+                th.textContent = header;
+                tableHeaders.appendChild(th);
+            });
         }
 
-        function openHistory() {
-            document.getElementById('map').style.display = 'none';
-            document.getElementById('table').style.display = 'none';
-            document.getElementById('historyFrame').style.display = 'block';
-            document.getElementById('marketAnalysisFrame').style.display = 'none';
-            document.getElementById('activitiesSkillsFrame').style.display = 'none';
+        function createTableRows(rows) {
+            const tableBody = document.getElementById('table-body');
+            tableBody.innerHTML = '';
+            rows.forEach(row => {
+                const tr = document.createElement('tr');
+                Object.values(row).forEach(value => {
+                    const td = document.createElement('td');
+                    td.textContent = value;
+                    tr.appendChild(td);
+                });
+                tableBody.appendChild(tr);
+            });
         }
 
         function openActivitiesSkills() {
-            document.getElementById('map').style.display = 'none';
-            document.getElementById('table').style.display = 'none';
-            document.getElementById('historyFrame').style.display = 'none';
-            document.getElementById('marketAnalysisFrame').style.display = 'none';
-            document.getElementById('activitiesSkillsFrame').style.display = 'block';
+            document.getElementById("map").style.display = "none";
+            document.getElementById("table").style.display = "none";
+            document.getElementById("legend").style.display = "none";
+            document.getElementById("mapTitle").style.display = "none";
+            var marketAnalysisFrame = document.getElementById('marketAnalysisFrame');
+            if (marketAnalysisFrame) {
+                marketAnalysisFrame.style.display = 'none';
+            }
+            var historyFrame = document.getElementById('historyFrame');
+            if (historyFrame) {
+                historyFrame.style.display = 'none';
+            }
+            var activitiesSkillsFrame = document.getElementById('activitiesSkillsFrame');
+            if (activitiesSkillsFrame.style.display === 'none') {
+                activitiesSkillsFrame.style.display = 'block';
+            } else {
+                activitiesSkillsFrame.style.display = 'none';
+            }
+
+            // Supprimer la classe 'home' pour ne pas afficher l'image de fond
+            document.body.classList.remove('home');
         }
 
         function openMarketAnalysis() {
-            document.getElementById('map').style.display = 'none';
-            document.getElementById('table').style.display = 'none';
-            document.getElementById('historyFrame').style.display = 'none';
-            document.getElementById('marketAnalysisFrame').style.display = 'block';
-            document.getElementById('activitiesSkillsFrame').style.display = 'none';
+            document.getElementById("map").style.display = "none";
+            document.getElementById("table").style.display = "none";
+            document.getElementById("legend").style.display = "none";
+            document.getElementById("mapTitle").style.display = "none";
+            var activitiesSkillsFrame = document.getElementById('activitiesSkillsFrame');
+            if (activitiesSkillsFrame) {
+                activitiesSkillsFrame.style.display = 'none';
+            }
+            var historyFrame = document.getElementById('historyFrame');
+            if (historyFrame) {
+                historyFrame.style.display = 'none';
+            }
+            var marketAnalysisFrame = document.getElementById('marketAnalysisFrame');
+            if (marketAnalysisFrame.style.display === 'none') {
+                marketAnalysisFrame.style.display = 'block';
+            } else {
+                marketAnalysisFrame.style.display = 'none';
+            }
+
+            // Supprimer la classe 'home' pour ne pas afficher l'image de fond
+            document.body.classList.remove('home');
+        }
+
+        function openHistory() {
+            document.getElementById("map").style.display = "none";
+            document.getElementById("table").style.display = "none";
+            document.getElementById("legend").style.display = "none";
+            document.getElementById("mapTitle").style.display = "none";
+            var activitiesSkillsFrame = document.getElementById('activitiesSkillsFrame');
+            if (activitiesSkillsFrame) {
+                activitiesSkillsFrame.style.display = 'none';
+            }
+            var marketAnalysisFrame = document.getElementById('marketAnalysisFrame');
+            if (marketAnalysisFrame) {
+                marketAnalysisFrame.style.display = 'none';
+            }
+            var historyFrame = document.getElementById('historyFrame');
+            if (historyFrame.style.display === 'none') {
+                historyFrame.style.display = 'block';
+            } else {
+                historyFrame.style.display = 'none';
+            }
+
+            // Supprimer la classe 'home' pour ne pas afficher l'image de fond
+            document.body.classList.remove('home');
         }
 
         function goToHome() {
-            document.getElementById('map').style.display = 'none';
-            document.getElementById('table').style.display = 'none';
-            document.getElementById('historyFrame').style.display = 'none';
-            document.getElementById('marketAnalysisFrame').style.display = 'none';
-            document.getElementById('activitiesSkillsFrame').style.display = 'none';
+            document.getElementById("map").style.display = "none";
+            document.getElementById("table").style.display = "none";
+            document.getElementById("legend").style.display = "none";
+            document.getElementById("mapTitle").style.display = "none";
+            var marketAnalysisFrame = document.getElementById('marketAnalysisFrame');
+            if (marketAnalysisFrame) {
+                marketAnalysisFrame.style.display = 'none';
+            }
+            var activitiesSkillsFrame = document.getElementById('activitiesSkillsFrame');
+            if (activitiesSkillsFrame) {
+                activitiesSkillsFrame.style.display = 'none';
+            }
+            var historyFrame = document.getElementById('historyFrame');
+            if (historyFrame) {
+                historyFrame.style.display = 'none';
+            }
+
+            // Appliquer la classe home au body pour afficher l'image de fond
+            document.body.classList.add('home');
         }
+
+        // Fetch initial des données
+        fetchData();
+
+        // Initialiser et afficher la carte dès le chargement de la page
+        document.addEventListener('DOMContentLoaded', function() {
+            showMap();
+        });
+
     </script>
 </body>
 </html>
