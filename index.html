@@ -158,31 +158,12 @@
         </table>
     </div>
     <script>
-        // Fonction pour appliquer le thème en fonction du stockage local
-        function applyTheme() {
-            const theme = localStorage.getItem('theme') || 'light';
-            document.body.classList.toggle('dark-theme', theme === 'dark');
-            document.body.classList.toggle('light-theme', theme === 'light');
-            document.getElementById('themeToggle').checked = (theme === 'dark');
-        }
-
-        // Fonction pour sauvegarder le thème sélectionné dans le stockage local
-        function saveTheme(theme) {
-            localStorage.setItem('theme', theme);
-        }
-
         // Gestion du changement de thème
         document.getElementById('themeToggle').addEventListener('change', function() {
-            const theme = this.checked ? 'dark' : 'light';
             document.body.classList.toggle('dark-theme', this.checked);
             document.body.classList.toggle('light-theme', !this.checked);
-            saveTheme(theme);
         });
 
-        // Initialisation du thème lors du chargement de la page
-        document.addEventListener('DOMContentLoaded', function() {
-            applyTheme();
-            showMap(); // Afficher la carte dès le chargement de la page
         var map = null; // Déclaration de la variable pour la carte
 
         var customIconPurple = L.icon({
@@ -201,12 +182,6 @@
             shadowSize: [41, 41]
         });
 
-        var map;
-        const lionIcon = L.icon({
-            iconUrl: 'images/lion_icon.png',
-            iconSize: [32, 32],
-            iconAnchor: [16, 32],
-            popupAnchor: [0, -32]
         var customIconBlue = L.icon({
             iconUrl: 'images/tuile_generic_bleu.png',
             iconSize: [25, 41],
@@ -375,13 +350,6 @@
             });
         }
 
-        // Fonction pour ouvrir l'historique
-        function openHistory() {
-            document.getElementById('historyFrame').style.display = 'block';
-            document.getElementById('marketAnalysisFrame').style.display = 'none';
-            document.getElementById('activitiesSkillsFrame').style.display = 'none';
-            document.getElementById('map').style.display = 'none';
-            document.getElementById('table').style.display = 'none';
         function createTableRows(rows) {
             const tableBody = document.getElementById('table-body');
             tableBody.innerHTML = '';
@@ -397,39 +365,97 @@
         }
 
         function openActivitiesSkills() {
-            document.getElementById('historyFrame').style.display = 'none';
-            document.getElementById('marketAnalysisFrame').style.display = 'none';
-            document.getElementById('activitiesSkillsFrame').style.display = 'block';
-            document.getElementById('map').style.display = 'none';
-            document.getElementById('table').style.display = 'none';
+            document.getElementById("map").style.display = "none";
+            document.getElementById("table").style.display = "none";
+            document.getElementById("legend").style.display = "none";
+            document.getElementById("mapTitle").style.display = "none";
+            var marketAnalysisFrame = document.getElementById('marketAnalysisFrame');
+            if (marketAnalysisFrame) {
+                marketAnalysisFrame.style.display = 'none';
+            }
+            var historyFrame = document.getElementById('historyFrame');
+            if (historyFrame) {
+                historyFrame.style.display = 'none';
+            }
+            var activitiesSkillsFrame = document.getElementById('activitiesSkillsFrame');
+            if (activitiesSkillsFrame.style.display === 'none') {
+                activitiesSkillsFrame.style.display = 'block';
+            } else {
+                activitiesSkillsFrame.style.display = 'none';
+            }
+
+            // Supprimer la classe 'home' pour ne pas afficher l'image de fond
+            document.body.classList.remove('home');
         }
 
-        // Fonction pour ouvrir l'analyse du marché
         function openMarketAnalysis() {
-            document.getElementById('historyFrame').style.display = 'none';
-            document.getElementById('marketAnalysisFrame').style.display = 'block';
-            document.getElementById('activitiesSkillsFrame').style.display = 'none';
-            document.getElementById('map').style.display = 'none';
-            document.getElementById('table').style.display = 'none';
+            document.getElementById("map").style.display = "none";
+            document.getElementById("table").style.display = "none";
+            document.getElementById("legend").style.display = "none";
+            document.getElementById("mapTitle").style.display = "none";
+            var activitiesSkillsFrame = document.getElementById('activitiesSkillsFrame');
+            if (activitiesSkillsFrame) {
+                activitiesSkillsFrame.style.display = 'none';
+            }
+            var historyFrame = document.getElementById('historyFrame');
+            if (historyFrame) {
+                historyFrame.style.display = 'none';
+            }
+            var marketAnalysisFrame = document.getElementById('marketAnalysisFrame');
+            if (marketAnalysisFrame.style.display === 'none') {
+                marketAnalysisFrame.style.display = 'block';
+            } else {
+                marketAnalysisFrame.style.display = 'none';
+            }
+
+            // Supprimer la classe 'home' pour ne pas afficher l'image de fond
+            document.body.classList.remove('home');
         }
 
-        // Fonction pour afficher la carte
-        function showMap() {
-            document.getElementById('historyFrame').style.display = 'none';
-            document.getElementById('marketAnalysisFrame').style.display = 'none';
-            document.getElementById('activitiesSkillsFrame').style.display = 'none';
-            document.getElementById('map').style.display = 'block';
-            document.getElementById('table').style.display = 'none';
+        function openHistory() {
+            document.getElementById("map").style.display = "none";
+            document.getElementById("table").style.display = "none";
+            document.getElementById("legend").style.display = "none";
+            document.getElementById("mapTitle").style.display = "none";
+            var activitiesSkillsFrame = document.getElementById('activitiesSkillsFrame');
+            if (activitiesSkillsFrame) {
+                activitiesSkillsFrame.style.display = 'none';
+            }
+            var marketAnalysisFrame = document.getElementById('marketAnalysisFrame');
+            if (marketAnalysisFrame) {
+                marketAnalysisFrame.style.display = 'none';
+            }
+            var historyFrame = document.getElementById('historyFrame');
+            if (historyFrame.style.display === 'none') {
+                historyFrame.style.display = 'block';
+            } else {
+                historyFrame.style.display = 'none';
+            }
+
+            // Supprimer la classe 'home' pour ne pas afficher l'image de fond
+            document.body.classList.remove('home');
         }
 
-        // Fonction pour afficher un tableau en fonction de l'identifiant
-        function showTable(tableId) {
-            document.getElementById('historyFrame').style.display = 'none';
-            document.getElementById('marketAnalysisFrame').style.display = 'none';
-            document.getElementById('activitiesSkillsFrame').style.display = 'none';
-            document.getElementById('map').style.display = 'none';
-            document.getElementById('table').style.display = 'block';
-            // Ajouter ici le code pour remplir le tableau en fonction de tableId
+        function goToHome() {
+            document.getElementById("map").style.display = "none";
+            document.getElementById("table").style.display = "none";
+            document.getElementById("legend").style.display = "none";
+            document.getElementById("mapTitle").style.display = "none";
+            var marketAnalysisFrame = document.getElementById('marketAnalysisFrame');
+            if (marketAnalysisFrame) {
+                marketAnalysisFrame.style.display = 'none';
+            }
+            var activitiesSkillsFrame = document.getElementById('activitiesSkillsFrame');
+            if (activitiesSkillsFrame) {
+                activitiesSkillsFrame.style.display = 'none';
+            }
+            var historyFrame = document.getElementById('historyFrame');
+            if (historyFrame) {
+                historyFrame.style.display = 'none';
+            }
+
+            // Appliquer la classe home au body pour afficher l'image de fond
+            document.body.classList.add('home');
         }
 
         // Fetch initial des données
