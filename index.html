@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Competitor_store</title>
+    <title>The Gentlemen's Pub</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <style>
@@ -51,10 +51,6 @@
         .title {
             font-size: 24px;
             margin-left: 10px; /* Marge à gauche du titre */
-        }
-
-        .home {
-            position: relative;
         }
 
         .home::after {
@@ -111,11 +107,7 @@
         </table>
     </div>
     <script>
-        var map = L.map('map').setView([48.897891998291016, 2.0886409282684326], 12);
-
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
+        var map = null; // Déclaration de la variable pour la carte
 
         var customIconPurple = L.icon({
             iconUrl: 'images/tuile_generic_purple.png',
@@ -191,6 +183,46 @@
         }
 
         function showMap() {
+            // Vérifie si la carte n'est pas déjà initialisée
+            if (!map) {
+                map = L.map('map').setView([48.897891998291016, 2.0886409282684326], 12);
+
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(map);
+
+                var lionMarker = L.marker([48.89810237251481, 2.088903849646817], {icon: lionIcon}).addTo(map)
+                    .bindPopup("<b>The Gentlemen's Pub</b><br><img src='images/lions_pub_full.png' alt='Lions Pub' width='100'>");
+
+                // Contrôler l'icône du Lion en fonction de l'état initial de la case à cocher
+                document.getElementById('lionCheckbox').addEventListener('change', function() {
+                    if (this.checked) {
+                        map.addLayer(lionMarker);
+                    } else {
+                        map.removeLayer(lionMarker);
+                    }
+                });
+
+                // Afficher les marqueurs pour les types sélectionnés
+                var boardGameCheckbox = document.getElementById('boardGameCheckbox');
+                var vapeStoreCheckbox = document.getElementById('vapeStoreCheckbox');
+                var gameBarCheckbox = document.getElementById('gameBarCheckbox');
+
+                boardGameCheckbox.addEventListener('change', function() {
+                    toggleMarkers('boardGame', this.checked);
+                });
+
+                vapeStoreCheckbox.addEventListener('change', function() {
+                    toggleMarkers('vapeStore', this.checked);
+                });
+
+                gameBarCheckbox.addEventListener('change', function() {
+                    toggleMarkers('gameBar', this.checked);
+                });
+
+            }
+
+            // Afficher la carte et masquer les autres éléments
             document.getElementById("map").style.display = "block";
             document.getElementById("table").style.display = "none";
             document.getElementById("legend").style.display = "block";
@@ -203,6 +235,9 @@
             if (activitiesSkillsFrame) {
                 activitiesSkillsFrame.style.display = 'none';
             }
+
+            // Supprimer la classe 'home' pour ne pas afficher l'image de fond
+            document.body.classList.remove('home');
         }
 
         function showTable(type) {
@@ -270,6 +305,9 @@
             } else {
                 activitiesSkillsFrame.style.display = 'none';
             }
+
+            // Supprimer la classe 'home' pour ne pas afficher l'image de fond
+            document.body.classList.remove('home');
         }
 
         function openMarketAnalysis() {
@@ -288,6 +326,9 @@
             } else {
                 marketAnalysisFrame.style.display = 'none';
             }
+
+            // Supprimer la classe 'home' pour ne pas afficher l'image de fond
+            document.body.classList.remove('home');
         }
 
         function goToHome() {
@@ -304,7 +345,7 @@
                 activitiesSkillsFrame.style.display = 'none';
             }
             // Appliquer la classe home au body pour afficher l'image de fond
-            document.body.className = 'home';
+            document.body.classList.add('home');
         }
 
         // Fetch initial des données
