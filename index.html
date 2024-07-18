@@ -9,6 +9,10 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url('images/backLion.png') no-repeat center center fixed;
+            background-size: cover;
         }
         #map {
             height: 500px;
@@ -44,6 +48,7 @@
             margin-right: 10px; /* Espacement entre l'image et les boutons */
             width: 50px; /* Ajustez la largeur selon vos besoins */
             height: auto; /* Pour maintenir les proportions */
+            cursor: pointer; /* Ajout du curseur pointeur pour l'image du logo */
         }
         .btn {
             text-decoration: none;
@@ -59,7 +64,6 @@
             cursor: pointer;
             margin-right: 10px; /* Espacement entre les boutons */
         }
-
         .btn:hover {
             padding: 10px;
             border-radius: 24px;
@@ -67,7 +71,6 @@
             -moz-border-radius: 24px;
             background-color: #6b96c9; /* Couleur au survol */
         }
-
         .title {
             font-size: 24px;
             margin-left: 10px; /* Marge à gauche du titre */
@@ -76,7 +79,9 @@
 </head>
 <body>
     <div class="header">
-        <img src="images/lions_pub_full_without_background.png" alt="The Gentlemen's Pub" width="50">
+        <a href="index.html">
+            <img src="images/lions_pub_full_without_background.png" alt="The Gentlemen's Pub">
+        </a>
         <div class="title">The Gentlemen's Pub</div>
     </div>
     <div class="header">
@@ -289,7 +294,7 @@
             }
         }
 
-                function openMarketAnalysis() {
+        function openMarketAnalysis() {
             document.getElementById("map").style.display = "none";
             document.getElementById("table").style.display = "none";
             document.getElementById("legend").style.display = "none";
@@ -307,7 +312,6 @@
             }
         }
 
-
         // Initial fetch of data
         fetchData();
 
@@ -323,7 +327,6 @@
                 map.removeLayer(lionMarker);
             }
         });
-
     </script>
 </body>
 </html>
