@@ -1,7 +1,7 @@
 ﻿# Vérifiez si Kafka est en cours d'exécution en essayant de se connecter au port Kafka (par défaut 9092)
 function Test-Kafka {
     param (
-        [string]$server = "NIKITA",
+        [string]$server = "127.0.0.1",
         [int]$port = 9092
     )
 
