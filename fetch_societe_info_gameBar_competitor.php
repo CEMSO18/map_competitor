@@ -27,7 +27,7 @@ function geocodeAddress($address, $apiKey) {
 
 function fetchDataFromTable($table, $apiKey, $conn) {
     $data = [];
-    $sql = "SELECT * FROM $table";
+    $sql = "SELECT code_ape, name, rue, code_postal, ville, long, lat, ca_dernier, ca_annee FROM $table";
     $result = $conn->query($sql);
     
     if ($result->num_rows > 0) {
