@@ -1,7 +1,7 @@
 # Vérifiez si ZooKeeper est en cours d'exécution en essayant de se connecter au port ZooKeeper (par défaut 2181)
 function Test-ZooKeeper {
     param (
-        [string]$server = "localhost",
+        [string]$server = "NIKITA",
         [int]$port = 2181
     )
 
