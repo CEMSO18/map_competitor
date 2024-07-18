@@ -252,6 +252,15 @@
                 tableBody.appendChild(tr);
             });
         }
+        
+        function openMarketAnalysis() {
+            var marketAnalysisFrame = document.getElementById('marketAnalysisFrame');
+            if (marketAnalysisFrame.style.display === 'none') {
+                marketAnalysisFrame.style.display = 'block';
+            } else {
+                marketAnalysisFrame.style.display = 'none';
+            }
+        }
 
         // Initial fetch of data
         fetchData();
