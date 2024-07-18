@@ -69,6 +69,7 @@
         <div class="title">The Gentlemen's Pub</div>
     </div>
     <div class="header">
+        <button class="btn" onclick="openHistory()">History</button>
         <button class="btn" onclick="openActivitiesSkills()">Activities & Skills</button>
         <button class="btn" onclick="openMarketAnalysis()">Market Analysis</button>
         <button class="btn" onclick="showMap()">Map</button>
@@ -240,6 +241,10 @@
             if (activitiesSkillsFrame) {
                 activitiesSkillsFrame.style.display = 'none';
             }
+            var historyFrame = document.getElementById('historyFrame');
+            if (historyFrame) {
+                historyFrame.style.display = 'none';
+            }
 
             // Supprimer la classe 'home' pour ne pas afficher l'image de fond
             document.body.classList.remove('home');
@@ -257,6 +262,10 @@
             var activitiesSkillsFrame = document.getElementById('activitiesSkillsFrame');
             if (activitiesSkillsFrame) {
                 activitiesSkillsFrame.style.display = 'none';
+            }
+            var historyFrame = document.getElementById('historyFrame');
+            if (historyFrame) {
+                historyFrame.style.display = 'none';
             }
 
             // Utiliser les données préchargées
@@ -334,6 +343,32 @@
             document.body.classList.remove('home');
         }
 
+        function openHistory() {
+            document.getElementById("map").style.display = "none";
+            document.getElementById("table").style.display = "none";
+            document.getElementById("legend").style.display = "none";
+            document.getElementById("mapTitle").style.display = "none";
+            var activitiesSkillsFrame = document.getElementById('activitiesSkillsFrame');
+            if (activitiesSkillsFrame) {
+                activitiesSkillsFrame.style.display = 'none';
+            }
+            var marketAnalysisFrame = document.getElementById('marketAnalysisFrame');
+            if (marketAnalysisFrame.style.display === 'none') {
+                marketAnalysisFrame.style.display = 'none';
+            } else {
+                marketAnalysisFrame.style.display = 'none';
+            }
+            var historyFrame = document.getElementById('historyFrame');
+            if (historyFrame.style.display === 'none') {
+                historyFrame.style.display = 'block';
+            } else {
+                historyFrame.style.display = 'none';
+            }
+
+            // Supprimer la classe 'home' pour ne pas afficher l'image de fond
+            document.body.classList.remove('home');
+        }
+
         function goToHome() {
             document.getElementById("map").style.display = "none";
             document.getElementById("table").style.display = "none";
@@ -347,6 +382,11 @@
             if (activitiesSkillsFrame) {
                 activitiesSkillsFrame.style.display = 'none';
             }
+            var historyFrame = document.getElementById('historyFrame');
+            if (historyFrame) {
+                historyFrame.style.display = 'none';
+            }
+            
             // Appliquer la classe home au body pour afficher l'image de fond
             document.body.classList.add('home');
         }
