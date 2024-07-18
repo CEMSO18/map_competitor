@@ -1,0 +1,83 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #ffffff;
+}
+
+body.home {
+    background: url('images/backLion.png') no-repeat center center fixed;
+    background-size: cover;
+}
+
+#map {
+    height: 500px;
+    width: 100%;
+}
+
+#legend {
+    padding: 10px;
+}
+
+#table {
+    display: none;
+    width: 100%;
+    overflow-y: scroll;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid black;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: #384a5e; /* Couleur de fond bleu "braves navy" */
+    color: #FFFFFF; /* Couleur de texte blanche */
+}
+
+.header img {
+    margin-right: 10px; /* Espacement entre l'image et les boutons */
+    width: 50px; /* Ajustez la largeur selon vos besoins */
+    height: auto; /* Pour maintenir les proportions */
+    cursor: pointer; /* Ajout du curseur pointeur pour l'image du logo */
+}
+
+.btn {
+    text-decoration: none;
+    padding: 10px;
+    font-family: Arial, sans-serif;
+    font-size: 1em;
+    color: #384a5e; /* Couleur du texte */
+    background-color: #ffffff; /* Couleur de fond blanche */
+    border-radius: 20px;
+    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px;
+    border: 2px solid #384a5e; /* Bordure de couleur */
+    cursor: pointer;
+    margin-right: 10px; /* Espacement entre les boutons */
+}
+
+.btn:hover {
+    padding: 10px;
+    border-radius: 24px;
+    -webkit-border-radius: 24px;
+    -moz-border-radius: 24px;
+    background-color: #e1e1e1; /* Couleur au survol */
+}
+
+.title {
+    font-size: 24px;
+    margin-left: 10px; /* Marge à gauche du titre */
+}
