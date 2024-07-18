@@ -212,7 +212,14 @@
             document.getElementById("table").style.display = "none";
             document.getElementById("legend").style.display = "block";
             document.getElementById("mapTitle").style.display = "block";
-            document.getElementById("body").style.display = "none";
+            var marketAnalysisFrame = document.getElementById('marketAnalysisFrame');
+            if (marketAnalysisFrame) {
+                marketAnalysisFrame.style.display = 'none';
+            }
+            var activitiesSkillsFrame = document.getElementById('activitiesSkillsFrame');
+            if (activitiesSkillsFrame) {
+                activitiesSkillsFrame.style.display = 'none';
+            }
         }
 
         function showTable(type) {
@@ -220,7 +227,14 @@
             document.getElementById("table").style.display = "block";
             document.getElementById("legend").style.display = "none";
             document.getElementById("mapTitle").style.display = "none";
-            document.getElementById("body").style.display = "none";
+            var marketAnalysisFrame = document.getElementById('marketAnalysisFrame');
+            if (marketAnalysisFrame) {
+                marketAnalysisFrame.style.display = 'none';
+            }
+            var activitiesSkillsFrame = document.getElementById('activitiesSkillsFrame');
+            if (activitiesSkillsFrame) {
+                activitiesSkillsFrame.style.display = 'none';
+            }
             fetch(`fetch_${type}.php`)
                 .then(response => response.json())
                 .then(data => {
@@ -263,7 +277,10 @@
             document.getElementById("table").style.display = "none";
             document.getElementById("legend").style.display = "none";
             document.getElementById("mapTitle").style.display = "none";
-            document.getElementById("body").style.display = "none";
+            var marketAnalysisFrame = document.getElementById('marketAnalysisFrame');
+            if (marketAnalysisFrame) {
+                marketAnalysisFrame.style.display = 'none';
+            }
             var activitiesSkillsFrame = document.getElementById('activitiesSkillsFrame');
             if (activitiesSkillsFrame.style.display === 'none') {
                 activitiesSkillsFrame.style.display = 'block';
@@ -272,12 +289,16 @@
             }
         }
 
-        function openMarketAnalysis() {
+                function openMarketAnalysis() {
             document.getElementById("map").style.display = "none";
             document.getElementById("table").style.display = "none";
             document.getElementById("legend").style.display = "none";
             document.getElementById("mapTitle").style.display = "none";
-            document.getElementById("body").style.display = "none";
+            var activitiesSkillsFrame = document.getElementById('activitiesSkillsFrame');
+            if (activitiesSkillsFrame) {
+                activitiesSkillsFrame.style.display = 'none';
+            }
+
             var marketAnalysisFrame = document.getElementById('marketAnalysisFrame');
             if (marketAnalysisFrame.style.display === 'none') {
                 marketAnalysisFrame.style.display = 'block';
@@ -285,6 +306,7 @@
                 marketAnalysisFrame.style.display = 'none';
             }
         }
+
 
         // Initial fetch of data
         fetchData();
