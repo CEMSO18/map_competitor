@@ -9,6 +9,14 @@
             font-family: Calibri, sans-serif;
             line-height: 1.6;
             margin: 20px;
+            background-color: #ffffff; /* Couleur de fond par défaut (clair) */
+            color: #000000; /* Couleur du texte par défaut (clair) */
+            transition: background-color 0.3s, color 0.3s; /* Transition pour les changements de couleur */
+        }
+        /* Mode sombre */
+        .dark-theme {
+            background-color: #000000;
+            color: #ffffff;
         }
         h2, h3 {
             margin-top: 20px;
@@ -24,9 +32,50 @@
         a:hover {
             text-decoration: underline;
         }
+        /* Style du bouton de changement de thème */
+        .theme-switch {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+        }
+        .theme-switch input {
+            display: none;
+        }
+        .theme-switch label {
+            cursor: pointer;
+            display: inline-block;
+            background-color: #384a5e;
+            border-radius: 50px;
+            width: 60px;
+            height: 30px;
+            position: relative;
+            transition: background-color 0.3s;
+        }
+        .theme-switch label::before {
+            content: "";
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background-color: #ffffff;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+        .theme-switch input:checked + label {
+            background-color: #ffffff;
+        }
+        .theme-switch input:checked + label::before {
+            transform: translateX(30px);
+        }
     </style>
 </head>
 <body>
+    <div class="theme-switch">
+        <input type="checkbox" id="themeToggle">
+        <label for="themeToggle"></label>
+    </div>
+
     <h2>Description des démarches engagées en vue d’étayer le projet professionnel</h2>
     <p style="font-style: italic;">
         Les différentes démarches entreprises pour construire le projet professionnel, notamment les services et prestations complémentaires (bilan de compétence, bilan de carrière, VAE, prestations d’accompagnement pour les créateurs d’entreprise …) éventuellement mobilisés au cours de l’accompagnement CEP pourront être listées dans le présent volet. Les comptes-rendus liés à ces démarches pourront être utilement joints.
@@ -52,5 +101,12 @@
         <li>Faire évoluer et développer une activité passionnante et conviviale ;</li>
         <li>Proposer un lieu de rencontre de tout âge dans lequel passer un moment à jouer, bavarder, partager, rire et s’amuser.</li>
     </ul>
+
+    <script>
+        // Gestion du changement de thème
+        document.getElementById('themeToggle').addEventListener('change', function() {
+            document.body.classList.toggle('dark-theme', this.checked);
+        });
+    </script>
 </body>
 </html>
