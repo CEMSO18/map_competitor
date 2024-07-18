@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Competitor_store - Map</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+</head>
+<body>
+    <div class="header">
+        <a href="index.html">
+            <img src="images/lions_pub_full_without_background.png" alt="The Gentlemen's Pub">
+        </a>
+        <div class="title">The Gentlemen's Pub</div>
+    </div>
+    <div class="header">
+        <button class="btn" onclick="openActivitiesSkills()">Activities & Skills</button>
+        <button class="btn" onclick="openMarketAnalysis()">Market Analysis</button>
+        <button class="btn" onclick="showMap()">Afficher la carte</button>
+        <button class="btn" onclick="showTable('societe_info_competitor')">Board Game</button>
+        <button class="btn" onclick="showTable('societe_info_vape_competitor')">Vape Store</button>
+        <button class="btn" onclick="showTable('societe_info_gameBar_competitor')">Game Bar</button>
+    </div>
+
+    <iframe id="marketAnalysisFrame" src="market_analysis.html" style="display: none; width: 100%; height: 1500px; border: none;"></iframe>
+    <iframe id="activitiesSkillsFrame" src="activities_skills.html" style="display: none; width: 100%; height: 1500px; border: none;"></iframe>
+
+    <h1 id="mapTitle">Carte des établissements concurrents</h1>
+    <div id="map"></div>
+    <div id="legend">
+        <input type="checkbox" id="boardGameCheckbox" checked>
+        <label for="boardGameCheckbox">Board Game</label>
+        <input type="checkbox" id="vapeStoreCheckbox" checked>
+        <label for="vapeStoreCheckbox">Vape Store</label>
+        <input type="checkbox" id="gameBarCheckbox" checked>
+        <label for="gameBarCheckbox">Game Bar</label>
+        <input type="checkbox" id="lionCheckbox" checked>
+        <label for="lionCheckbox">Lion</label>
+    </div>
+    <div id="table">
+        <table>
+            <thead>
+                <tr id="table-headers"></tr>
+            </thead>
+            <tbody id="table-body"></tbody>
+        </table>
+    </div>
+    <script>
+        var map = L.map('map').setView([48.897891998291016, 2.0886409282684326], 12);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        var customIconPurple = L.icon({
+            iconUrl: 'images/tuile_generic_purple.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+        });
+
+        var lionIcon = L.icon({
+            iconUrl: 'images/lions_pub_full.png',
+            iconSize: [41, 41],
+            iconAnchor: [20, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+        });
+
+        var markers = [];
+
+        function addMarker(lat, lon, popupContent, category) {
+            var marker = L.marker([lat, lon], {icon: customIconPurple}).addTo(map)
+                .bindPopup(popupContent);
+            marker.category = category;
+            markers.push(marker);
+        }
+
+        function fetchData() {
+            fetch('fetch_data.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        data.data.forEach(item => {
+                            addMarker(item.latitude, item.longitude, item.popupContent, item.category);
+                        });
+                    } else {
+                        console.error('Error:', data.error);
+                    }
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
+
+        function toggleMarkers(category, show) {
+            markers.forEach(marker => {
+                if (marker.category === category) {
+                    if (show) {
+                        map.addLayer(marker);
+                    } else {
+                        map.removeLayer(marker);
+                    }
+                }
+            });
+        }
+
+        document.getElementById('boardGameCheckbox').addEventListener('change', function() {
+            toggleMarkers('boardGame', this.checked);
+        });
+
+        document.getElementById('vapeStoreCheckbox').addEventListener('change', function() {
+            toggleMarkers('vapeStore', this.checked);
+        });
+
+        document.getElementById('gameBarCheckbox').addEventListener('change', function() {
+            toggleMarkers('gameBar', this.checked);
+        });
+
+        document.getElementById('lionCheckbox').addEventListener('change', function() {
+            toggleMarkers('lion', this.checked);
+        });
+
+        function showMap() {
+            document.getElementById("map").style.display = "block";
+            document.getElementById("table").style.display = "none";
+            document.getElementById("legend").style.display = "block";
+            document.getElementById("mapTitle").style.display = "block";
+            var marketAnalysisFrame = document.getElementById('marketAnalysisFrame');
+            if (marketAnalysisFrame) {
+                marketAnalysisFrame.style.display = 'none';
+            }
+            var activitiesSkillsFrame = document.getElementById('activitiesSkillsFrame');
+            if (activitiesSkillsFrame) {
+                activitiesSkillsFrame.style.display = 'none';
+            }
+        }
+
+        function showTable(type) {
+            document.getElementById("map").style.display = "none";
+            document.getElementById("table").style.display = "block";
+            document.getElementById("legend").style.display = "none";
+            document.getElementById("mapTitle").style.display = "none";
+            var marketAnalysisFrame = document.getElementById('marketAnalysisFrame');
+            if (marketAnalysisFrame) {
+                marketAnalysisFrame.style.display = 'none';
+            }
+            var activitiesSkillsFrame = document.getElementById('activitiesSkillsFrame');
+            if (activitiesSkillsFrame) {
+                activitiesSkillsFrame.style.display = 'none';
+            }
+            fetch(`fetch_${type}.php`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        createTableHeaders(Object.keys(data.data[0]));
+                        createTableRows(data.data);
+                    } else {
+                        console.error('Error:', data.error);
+                    }
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
+
+        function createTableHeaders(headers) {
+            const tableHeaders = document.getElementById('table-headers');
+            tableHeaders.innerHTML = '';
+            headers.forEach(header => {
+                const th = document.createElement('th');
+                th.textContent = header;
+                tableHeaders.appendChild(th);
+            });
+        }
+
+        function createTableRows(rows) {
+            const tableBody = document.getElementById('table-body');
+            tableBody.innerHTML = '';
+            rows.forEach(row => {
+                const tr = document.createElement('tr');
+                Object.values(row).forEach(value => {
+                    const td = document.createElement('td');
+                    td.textContent = value;
+                    tr.appendChild(td);
+                });
+                tableBody.appendChild(tr);
+            });
+        }
+        
+        function openActivitiesSkills() {
+            document.getElementById("map").style.display = "none";
+            document.getElementById("table").style.display = "none";
+            document.getElementById("legend").style.display = "none";
+            document.getElementById("mapTitle").style.display = "none";
+            var marketAnalysisFrame = document.getElementById('marketAnalysisFrame');
+            if (marketAnalysisFrame) {
+                marketAnalysisFrame.style.display = 'none';
+            }
+            var activitiesSkillsFrame = document.getElementById('activitiesSkillsFrame');
+            if (activitiesSkillsFrame.style.display === 'none') {
+                activitiesSkillsFrame.style.display = 'block';
+            } else {
+                activitiesSkillsFrame.style.display = 'none';
+            }
+        }
+
+        function openMarketAnalysis() {
+            document.getElementById("map").style.display = "none";
+            document.getElementById("table").style.display = "none";
+            document.getElementById("legend").style.display = "none";
+            document.getElementById("mapTitle").style.display = "none";
+            var activitiesSkillsFrame = document.getElementById('activitiesSkillsFrame');
+            if (activitiesSkillsFrame) {
+                activitiesSkillsFrame.style.display = 'none';
+            }
+
+            var marketAnalysisFrame = document.getElementById('marketAnalysisFrame');
+            if (marketAnalysisFrame.style.display === 'none') {
+                marketAnalysisFrame.style.display = 'block';
+            } else {
+                marketAnalysisFrame.style.display = 'none';
+            }
+        }
+
+        // Initial fetch of data
+        fetchData();
+
+        // Ajout d'un marqueur lion pour les coordonnées spécifiques
+        var lionMarker = L.marker([48.89810237251481, 2.088903849646817], {icon: lionIcon}).addTo(map)
+            .bindPopup("<b>The Gentlemen's Pub</b><br><img src='images/lions_pub_full.png' alt='Lions Pub' width='100'>");
+
+        // Contrôle initial de l'icône Lion en fonction de l'état initial du checkbox
+        document.getElementById('lionCheckbox').addEventListener('change', function() {
+            if (this.checked) {
+                map.addLayer(lionMarker);
+            } else {
+                map.removeLayer(lionMarker);
+            }
+        });
+    </script>
+</body>
+</html>
