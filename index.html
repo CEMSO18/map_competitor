@@ -11,7 +11,7 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background: #ffffff;
+            background: #ffffff; /* Couleur de fond par défaut */
         }
 
         .header {
@@ -66,39 +66,11 @@
             height: 100%;
             background: url('images/backLion.png') no-repeat center center fixed;
             background-size: cover;
-            z-index: -1; /* Place the background behind the content */
+            z-index: -1; /* Place l'image de fond derrière le contenu */
         }
 
-        #map {
-            display: none;
-            height: 500px;
-            width: 100%;
-        }
+        /* Ajoutez d'autres styles CSS selon vos besoins */
 
-        #legend {
-            display: none;
-            padding: 10px;
-        }
-
-        #table {
-            display: none;
-            width: 100%;
-            overflow-y: scroll;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        table, th, td {
-            border: 1px solid black;
-        }
-
-        th, td {
-            padding: 10px;
-            text-align: left;
-        }
     </style>
 </head>
 <body class="home">
@@ -331,18 +303,18 @@
             if (activitiesSkillsFrame) {
                 activitiesSkillsFrame.style.display = 'none';
             }
-            // Set the home class to body for displaying background
+            // Appliquer la classe home au body pour afficher l'image de fond
             document.body.className = 'home';
         }
 
-        // Initial fetch of data
+        // Fetch initial des données
         fetchData();
 
-        // Ajout d'un marqueur lion pour les coordonnées spécifiques
+        // Ajouter un marqueur pour les coordonnées spécifiques
         var lionMarker = L.marker([48.89810237251481, 2.088903849646817], {icon: lionIcon}).addTo(map)
             .bindPopup("<b>The Gentlemen's Pub</b><br><img src='images/lions_pub_full.png' alt='Lions Pub' width='100'>");
 
-        // Contrôle initial de l'icône Lion en fonction de l'état initial du checkbox
+        // Contrôler l'icône du Lion en fonction de l'état initial de la case à cocher
         document.getElementById('lionCheckbox').addEventListener('change', function() {
             if (this.checked) {
                 map.addLayer(lionMarker);
