@@ -57,7 +57,7 @@
             position: relative;
         }
 
-        body.home .home::before {
+        .home::after {
             content: "";
             position: fixed;
             top: 0;
@@ -217,22 +217,6 @@
                 }
             });
         }
-
-        document.getElementById('boardGameCheckbox').addEventListener('change', function() {
-            toggleMarkers('boardGame', this.checked);
-        });
-
-        document.getElementById('vapeStoreCheckbox').addEventListener('change', function() {
-            toggleMarkers('vapeStore', this.checked);
-        });
-
-        document.getElementById('gameBarCheckbox').addEventListener('change', function() {
-            toggleMarkers('gameBar', this.checked);
-        });
-
-        document.getElementById('lionCheckbox').addEventListener('change', function() {
-            toggleMarkers('lion', this.checked);
-        });
 
         function showMap() {
             document.getElementById("map").style.display = "block";
