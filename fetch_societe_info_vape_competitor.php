@@ -27,18 +27,25 @@ function geocodeAddress($address, $apiKey) {
 
 function fetchDataFromTable($table, $apiKey, $conn) {
     $data = [];
-    // Sélectionnez uniquement les colonnes nécessaires
-    $sql = "SELECT code_ape, name, rue, code_postal, ville, long, lat, ca_dernier, ca_annee FROM $table";
+    $sql = "SELECT code_ape, name, rue, code_postal, ville, ca_dernier, ca_annee, lat, long, formatted FROM $table";
     $result = $conn->query($sql);
     
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
-            $address = $row['rue'] . ', ' . $row['code_postal'] . ' ' . $row['ville'];
-            $geocodedData = geocodeAddress($address, $apiKey);
-            if ($geocodedData) {
-                $row['lat'] = $geocodedData['lat'];
-                $row['long'] = $geocodedData['long'];
-                $row['formatted'] = $geocodedData['formatted'];
+            // Geocode only if lat/long are missing
+            if (empty($row['lat']) || empty($row['long'])) {
+                $address = $row['rue'] . ', ' . $row['code_postal'] . ' ' . $row['ville'];
+                $geocodedData = geocodeAddress($address, $apiKey);
+                if ($geocodedData) {
+                    $row['lat'] = $geocodedData['lat'];
+                    $row['long'] = $geocodedData['long'];
+                    $row['formatted'] = $geocodedData['formatted'];
+                    // Update database with geocoded data
+                    $updateSql = "UPDATE $table SET lat = ?, long = ?, formatted = ? WHERE code_ape = ?";
+                    $stmt = $conn->prepare($updateSql);
+                    $stmt->bind_param('ddss', $row['lat'], $row['long'], $row['formatted'], $row['code_ape']);
+                    $stmt->execute();
+                }
             }
             $data[] = $row;
         }
