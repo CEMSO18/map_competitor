@@ -11,7 +11,8 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background: #ffffff; /* Couleur de fond par défaut */
+            background: #ffffff; /* Couleur de fond par défaut (clair) */
+            transition: background-color 0.3s, color 0.3s;
         }
 
         .header {
@@ -20,6 +21,7 @@
             padding: 10px;
             background-color: #384a5e; /* Couleur de fond bleu "braves navy" */
             color: #FFFFFF; /* Couleur de texte blanche */
+            position: relative; /* Position relative pour le positionnement absolu du curseur */
         }
 
         .header img {
@@ -51,6 +53,57 @@
         .title {
             font-size: 24px;
             margin-left: 10px; /* Marge à gauche du titre */
+            flex-grow: 1; /* Permet au titre de prendre tout l'espace disponible */
+        }
+
+        .theme-switch {
+            position: absolute;
+            right: 10px;
+        }
+
+        .theme-switch input {
+            display: none;
+        }
+
+        .theme-switch label {
+            cursor: pointer;
+            display: inline-block;
+            background-color: #384a5e;
+            border-radius: 50px;
+            width: 60px;
+            height: 30px;
+            position: relative;
+            transition: background-color 0.3s;
+        }
+
+        .theme-switch label::before {
+            content: "";
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background-color: #ffffff;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+
+        .theme-switch input:checked + label {
+            background-color: #ffffff;
+        }
+
+        .theme-switch input:checked + label::before {
+            transform: translateX(30px);
+        }
+
+        .light-theme {
+            background-color: #ffffff;
+            color: #000000;
+        }
+
+        .dark-theme {
+            background-color: #000000;
+            color: #ffffff;
         }
 
         #map {
@@ -59,14 +112,16 @@
             display: block;
         }
 
-        /* Ajoutez d'autres styles CSS selon vos besoins */
-
     </style>
 </head>
 <body>
     <div class="header">
         <img src="images/lions_pub_full_without_background.png" alt="The Gentlemen's Pub" width="50" onclick="goToHome()">
         <div class="title">The Gentlemen's Pub</div>
+        <div class="theme-switch">
+            <input type="checkbox" id="themeToggle">
+            <label for="themeToggle"></label>
+        </div>
     </div>
     <div class="header">
         <button class="btn" onclick="openHistory()">History</button>
@@ -103,6 +158,12 @@
         </table>
     </div>
     <script>
+        // Gestion du changement de thème
+        document.getElementById('themeToggle').addEventListener('change', function() {
+            document.body.classList.toggle('dark-theme', this.checked);
+            document.body.classList.toggle('light-theme', !this.checked);
+        });
+
         var map = null; // Déclaration de la variable pour la carte
 
         var customIconPurple = L.icon({
