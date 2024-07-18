@@ -312,6 +312,10 @@
             if (marketAnalysisFrame) {
                 marketAnalysisFrame.style.display = 'none';
             }
+            var historyFrame = document.getElementById('historyFrame');
+            if (historyFrame) {
+                historyFrame.style.display = 'none';
+            }
             var activitiesSkillsFrame = document.getElementById('activitiesSkillsFrame');
             if (activitiesSkillsFrame.style.display === 'none') {
                 activitiesSkillsFrame.style.display = 'block';
@@ -332,7 +336,10 @@
             if (activitiesSkillsFrame) {
                 activitiesSkillsFrame.style.display = 'none';
             }
-
+            var historyFrame = document.getElementById('historyFrame');
+            if (historyFrame) {
+                historyFrame.style.display = 'none';
+            }
             var marketAnalysisFrame = document.getElementById('marketAnalysisFrame');
             if (marketAnalysisFrame.style.display === 'none') {
                 marketAnalysisFrame.style.display = 'block';
@@ -354,9 +361,7 @@
                 activitiesSkillsFrame.style.display = 'none';
             }
             var marketAnalysisFrame = document.getElementById('marketAnalysisFrame');
-            if (marketAnalysisFrame.style.display === 'none') {
-                marketAnalysisFrame.style.display = 'none';
-            } else {
+            if (marketAnalysisFrame) {
                 marketAnalysisFrame.style.display = 'none';
             }
             var historyFrame = document.getElementById('historyFrame');
