@@ -62,8 +62,9 @@
     </ul>
 
     <script>
-        // Vérifie le thème stocké et applique le thème correspondant lors du chargement de la page
+        // Vérifie le thème stocké et applique le thème correspondant
         document.addEventListener('DOMContentLoaded', () => {
+            // Vérifie le thème stocké dans localStorage et applique le thème
             const darkTheme = localStorage.getItem('dark-theme') === 'true';
             if (darkTheme) {
                 document.body.classList.add('dark-theme');
@@ -74,7 +75,7 @@
                 document.body.classList.remove('dark-theme');
                 document.getElementById('themeToggle').checked = false;
             }
-        })
+        });
 
         // Gestion du changement de thème
         //document.getElementById('themeToggle').addEventListener('change', function() {
