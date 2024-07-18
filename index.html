@@ -14,7 +14,50 @@
             background: #ffffff;
         }
 
-        body.home::before {
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background-color: #384a5e; /* Couleur de fond bleu "braves navy" */
+            color: #FFFFFF; /* Couleur de texte blanche */
+        }
+
+        .header img {
+            margin-right: 10px; /* Espacement entre l'image et les boutons */
+            width: 50px; /* Ajustez la largeur selon vos besoins */
+            height: auto; /* Pour maintenir les proportions */
+            cursor: pointer; /* Curseur pointeur pour montrer qu'il est cliquable */
+        }
+
+        .btn {
+            text-decoration: none;
+            padding: 10px;
+            font-family: Arial, sans-serif;
+            font-size: 1em;
+            color: #000000;
+            background-color: #FFFFFF;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            margin-right: 10px; /* Espacement entre les boutons */
+        }
+
+        .btn:hover {
+            padding: 10px;
+            border-radius: 24px;
+            background-color: #f0f0f0; /* Couleur au survol */
+        }
+
+        .title {
+            font-size: 24px;
+            margin-left: 10px; /* Marge à gauche du titre */
+        }
+
+        .home {
+            position: relative;
+        }
+
+        body.home .home::before {
             content: "";
             position: fixed;
             top: 0;
@@ -27,11 +70,13 @@
         }
 
         #map {
+            display: none;
             height: 500px;
             width: 100%;
         }
 
         #legend {
+            display: none;
             padding: 10px;
         }
 
@@ -53,49 +98,6 @@
         th, td {
             padding: 10px;
             text-align: left;
-        }
-
-        .header {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            background-color: #384a5e; /* Couleur de fond bleu "braves navy" */
-            color: #FFFFFF; /* Couleur de texte blanche */
-        }
-
-        .header img {
-            margin-right: 10px; /* Espacement entre l'image et les boutons */
-            width: 50px; /* Ajustez la largeur selon vos besoins */
-            height: auto; /* Pour maintenir les proportions */
-            cursor: pointer; /* Ajout du curseur pointeur pour l'image du logo */
-        }
-
-        .btn {
-            text-decoration: none;
-            padding: 10px;
-            font-family: Arial, sans-serif;
-            font-size: 1em;
-            color: #384a5e; /* Couleur du texte */
-            background-color: #ffffff; /* Couleur de fond blanche */
-            border-radius: 20px;
-            -webkit-border-radius: 20px;
-            -moz-border-radius: 20px;
-            border: 2px solid #384a5e; /* Bordure de couleur */
-            cursor: pointer;
-            margin-right: 10px; /* Espacement entre les boutons */
-        }
-
-        .btn:hover {
-            padding: 10px;
-            border-radius: 24px;
-            -webkit-border-radius: 24px;
-            -moz-border-radius: 24px;
-            background-color: #e1e1e1; /* Couleur au survol */
-        }
-
-        .title {
-            font-size: 24px;
-            margin-left: 10px; /* Marge à gauche du titre */
         }
     </style>
 </head>
