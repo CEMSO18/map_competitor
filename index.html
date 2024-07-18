@@ -142,14 +142,25 @@
             lion: []
         };
 
+        // Variables globales pour les données préchargées
+        var preloadedData = {
+            societe_info_competitor: [],
+            societe_info_vape_competitor: [],
+            societe_info_gameBar_competitor: []
+        };
+
         function fetchData() {
             fetch('fetch_data.php')
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        addMarkers(data.data.results_societe_info_competitor, customIconPurple, 'boardGame');
-                        addMarkers(data.data.results_societe_info_vape_competitor, customIconRed, 'vapeStore');
-                        addMarkers(data.data.results_societe_info_gameBar_competitor, customIconBlue, 'gameBar');
+                        preloadedData.societe_info_competitor = data.data.results_societe_info_competitor;
+                        preloadedData.societe_info_vape_competitor = data.data.results_societe_info_vape_competitor;
+                        preloadedData.societe_info_gameBar_competitor = data.data.results_societe_info_gameBar_competitor;
+
+                        addMarkers(preloadedData.societe_info_competitor, customIconPurple, 'boardGame');
+                        addMarkers(preloadedData.societe_info_vape_competitor, customIconRed, 'vapeStore');
+                        addMarkers(preloadedData.societe_info_gameBar_competitor, customIconBlue, 'gameBar');
                     } else {
                         console.error('Error:', data.error);
                     }
@@ -247,17 +258,15 @@
             if (activitiesSkillsFrame) {
                 activitiesSkillsFrame.style.display = 'none';
             }
-            fetch(`fetch_${type}.php`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        createTableHeaders(Object.keys(data.data[0]));
-                        createTableRows(data.data);
-                    } else {
-                        console.error('Error:', data.error);
-                    }
-                })
-                .catch(error => console.error('Error fetching data:', error));
+
+            // Utiliser les données préchargées
+            const data = preloadedData[type];
+            if (data && data.length > 0) {
+                createTableHeaders(Object.keys(data[0]));
+                createTableRows(data);
+            } else {
+                console.error('No data available for:', type);
+            }
         }
 
         function createTableHeaders(headers) {
