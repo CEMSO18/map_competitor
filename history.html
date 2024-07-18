@@ -70,6 +70,13 @@
                 document.body.classList.remove('dark-theme');
             }
         });
+
+        // Gestion du changement de thème
+        document.getElementById('themeToggle').addEventListener('change', function() {
+            const darkMode = this.checked;
+            document.body.classList.toggle('dark-theme', darkMode);
+            localStorage.setItem('dark-theme', darkMode);
+        });
     </script>
 </body>
 </html>
