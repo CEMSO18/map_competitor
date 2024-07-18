@@ -254,6 +254,10 @@
         }
         
         function openMarketAnalysis() {
+            document.getElementById("map").style.display = "none";
+            document.getElementById("table").style.display = "none";
+            document.getElementById("legend").style.display = "none";
+            document.getElementById("mapTitle").style.display = "none";
             var marketAnalysisFrame = document.getElementById('marketAnalysisFrame');
             if (marketAnalysisFrame.style.display === 'none') {
                 marketAnalysisFrame.style.display = 'block';
