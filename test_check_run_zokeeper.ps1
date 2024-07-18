@@ -3,7 +3,7 @@ $timeout = 5
 
 try {
     $tcpclient = New-Object System.Net.Sockets.TcpClient
-    $asyncResult = $tcpclient.BeginConnect('NIKITA', $zookeeper_port, $null, $null)
+    $asyncResult = $tcpclient.BeginConnect('nikita', $zookeeper_port, $null, $null)
     $waitHandle = $asyncResult.AsyncWaitHandle
     if ($waitHandle.WaitOne($timeout * 1000, $false)) {
         $tcpclient.EndConnect($asyncResult)
