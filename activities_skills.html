@@ -9,6 +9,14 @@
             font-family: Calibri, sans-serif;
             line-height: 1.6;
             margin: 20px;
+            background-color: #ffffff; /* Couleur de fond par défaut (clair) */
+            color: #000000; /* Couleur du texte par défaut (clair) */
+            transition: background-color 0.3s, color 0.3s; /* Transition pour les changements de couleur */
+        }
+        /* Mode sombre */
+        .dark-theme {
+            background-color: #000000;
+            color: #ffffff;
         }
         h2, h3 {
             margin-top: 20px;
@@ -75,5 +83,16 @@
         <li>Une formation en comptabilité pour bien gérer les finances - <a href="https://creactifs.com/formations/comptabilite-et-gestion-pour-non-comptables/" target="_blank">lien</a> ;</li>
         <li>En facultatif : une formation aux métiers de la bouche, une formation en œnologie, en sommellerie, en art culinaire, en art de la table, … .</li>
     </ul>
+    
+    <script>
+        // Vérifie le thème stocké et applique le thème correspondant
+        document.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('dark-theme') === 'true') {
+                document.body.classList.add('dark-theme');
+            } else {
+                document.body.classList.remove('dark-theme');
+            }
+        });
+    </script>
 </body>
 </html>

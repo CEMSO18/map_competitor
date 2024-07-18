@@ -9,6 +9,14 @@
             font-family: Calibri, sans-serif;
             line-height: 1.6;
             margin: 20px;
+            background-color: #ffffff; /* Couleur de fond par défaut (clair) */
+            color: #000000; /* Couleur du texte par défaut (clair) */
+            transition: background-color 0.3s, color 0.3s; /* Transition pour les changements de couleur */
+        }
+        /* Mode sombre */
+        .dark-theme {
+            background-color: #000000;
+            color: #ffffff;
         }
         h2, h3 {
             margin-top: 20px;
@@ -70,5 +78,16 @@
     <blockquote>
         Les cafés et bars constituent un sous-ensemble des débits de boissons (cette catégorie comprenant également les discothèques, bars dansants, etc.). Le secteur recouvre une variété de modèles commerciaux différents : les bars, bars-tabac et cafés de quartier représentent une majorité des établissements du secteur ; les coffee shops, bars à thème (bar à vin, bar à bière, bar à cocktails, etc.) et bars-caviste sont des segments nouveaux et en forte croissance, composés d’indépendants mais également d’enseignes, le plus souvent développées sous franchise.
     </blockquote>
+    
+    <script>
+        // Vérifie le thème stocké et applique le thème correspondant
+        document.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('dark-theme') === 'true') {
+                document.body.classList.add('dark-theme');
+            } else {
+                document.body.classList.remove('dark-theme');
+            }
+        });
+    </script>
 </body>
 </html>
