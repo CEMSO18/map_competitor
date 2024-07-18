@@ -14,9 +14,16 @@
             background: #ffffff;
         }
 
-        body.home {
+        body.home::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: url('images/backLion.png') no-repeat center center fixed;
             background-size: cover;
+            z-index: -1; /* Place the background behind the content */
         }
 
         #map {
