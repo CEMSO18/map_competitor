@@ -344,29 +344,38 @@
             }
 
             // Utiliser les données préchargées
-        function showTable(tableName) {
-            const tableHeaders = {
-                societe_info_competitor: ["Name", "code_ape", "rue", "code_postal", "ville", "ca_dernier", "ca_annee"],
-                societe_info_vape_competitor: ["Name", "code_ape", "rue", "code_postal", "ville", "ca_dernier", "ca_annee"],
-                societe_info_gameBar_competitor: ["Name", "code_ape", "rue", "code_postal", "ville", "ca_dernier", "ca_annee"]
-            };
+            const data = preloadedData[type];
+            if (data && data.length > 0) {
+                createTableHeaders(Object.keys(data[0]));
+                createTableRows(data);
+            } else {
+                console.error('No data available for:', type);
+            }
+        }
 
-            const headers = tableHeaders[tableName] || [];
-            const data = preloadedData[tableName] || [];
+        function createTableHeaders(headers) {
+            const tableHeaders = document.getElementById('table-headers');
+            tableHeaders.innerHTML = '';
+            headers.forEach(header => {
+                const th = document.createElement('th');
+                th.textContent = header;
+                tableHeaders.appendChild(th);
+            });
+        }
 
-            // Mise à jour des en-têtes de la table
-            const tableHeadersElement = document.getElementById('table-headers');
-            tableHeadersElement.innerHTML = headers.map(header => `<th>${header}</th>`).join('');
-
-            // Mise à jour des lignes de la table
-            const tableBodyElement = document.getElementById('table-body');
-            tableBodyElement.innerHTML = data.map(row => `
-                <tr>
-                    <td>${row.name}</td>
-                    <td>${row.address}</td>
-                    <td>${row.type}</td>
-                </tr>
-            `).join('');
+        function createTableRows(rows) {
+            const tableBody = document.getElementById('table-body');
+            tableBody.innerHTML = '';
+            rows.forEach(row => {
+                const tr = document.createElement('tr');
+                Object.values(row).forEach(value => {
+                    const td = document.createElement('td');
+                    td.textContent = value;
+                    tr.appendChild(td);
+                });
+                tableBody.appendChild(tr);
+            });
+        }
 
         function openActivitiesSkills() {
             document.getElementById("map").style.display = "none";
