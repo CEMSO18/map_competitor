@@ -1,488 +1,484 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>The Gentlemen's Pub</title>
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                margin: 0;
-                padding: 0;
-                background: #ffffff; /* Couleur de fond par défaut (clair) */
-                transition: background-color 0.3s, color 0.3s;
-            }
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Gentlemen's Pub</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #ffffff; /* Couleur de fond par défaut (clair) */
+            transition: background-color 0.3s, color 0.3s;
+        }
 
-            .header {
-                display: flex;
-                align-items: center;
-                padding: 10px;
-                background-color: #384a5e; /* Couleur de fond bleu "braves navy" */
-                color: #FFFFFF; /* Couleur de texte blanche */
-                position: relative; /* Position relative pour le positionnement absolu du curseur */
-            }
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background-color: #384a5e; /* Couleur de fond bleu "braves navy" */
+            color: #FFFFFF; /* Couleur de texte blanche */
+            position: relative; /* Position relative pour le positionnement absolu du curseur */
+        }
 
-            .header img {
-                margin-right: 10px; /* Espacement entre l'image et les boutons */
-                width: 50px; /* Ajustez la largeur selon vos besoins */
-                height: auto; /* Pour maintenir les proportions */
-                cursor: pointer; /* Curseur pointeur pour montrer qu'il est cliquable */
-            }
+        .header img {
+            margin-right: 10px; /* Espacement entre l'image et les boutons */
+            width: 50px; /* Ajustez la largeur selon vos besoins */
+            height: auto; /* Pour maintenir les proportions */
+            cursor: pointer; /* Curseur pointeur pour montrer qu'il est cliquable */
+        }
 
-            .btn {
-                text-decoration: none;
-                padding: 10px;
-                font-family: Arial, sans-serif;
-                font-size: 1em;
-                color: #000000;
-                background-color: #FFFFFF;
-                border-radius: 20px;
-                border: none;
-                cursor: pointer;
-                margin-right: 10px; /* Espacement entre les boutons */
-            }
+        .btn {
+            text-decoration: none;
+            padding: 10px;
+            font-family: Arial, sans-serif;
+            font-size: 1em;
+            color: #000000;
+            background-color: #FFFFFF;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            margin-right: 10px; /* Espacement entre les boutons */
+        }
 
-            .btn:hover {
-                padding: 10px;
-                border-radius: 24px;
-                background-color: #f0f0f0; /* Couleur au survol */
-            }
+        .btn:hover {
+            padding: 10px;
+            border-radius: 24px;
+            background-color: #f0f0f0; /* Couleur au survol */
+        }
 
-            .title {
-                font-size: 24px;
-                margin-left: 10px; /* Marge à gauche du titre */
-                flex-grow: 1; /* Permet au titre de prendre tout l'espace disponible */
-            }
+        .title {
+            font-size: 24px;
+            margin-left: 10px; /* Marge à gauche du titre */
+            flex-grow: 1; /* Permet au titre de prendre tout l'espace disponible */
+        }
 
-            .theme-switch {
-                position: absolute;
-                right: 10px;
-            }
+        .theme-switch {
+            position: absolute;
+            right: 10px;
+        }
 
-            .theme-switch input {
-                display: none;
-            }
+        .theme-switch input {
+            display: none;
+        }
 
-            .theme-switch label {
-                cursor: pointer;
-                display: inline-block;
-                background-color: #384a5e;
-                border-radius: 50px;
-                width: 60px;
-                height: 30px;
-                position: relative;
-                transition: background-color 0.3s;
-            }
+        .theme-switch label {
+            cursor: pointer;
+            display: inline-block;
+            background-color: #384a5e;
+            border-radius: 50px;
+            width: 60px;
+            height: 30px;
+            position: relative;
+            transition: background-color 0.3s;
+        }
 
-            .theme-switch label::before {
-                content: "";
-                position: absolute;
-                top: 3px;
-                left: 3px;
-                width: 24px;
-                height: 24px;
-                background-color: #ffffff;
-                border-radius: 50%;
-                transition: transform 0.3s;
-            }
+        .theme-switch label::before {
+            content: "";
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background-color: #ffffff;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
 
-            .theme-switch input:checked + label {
-                background-color: #f0e68c;
-            }
+        .theme-switch input:checked + label {
+            background-color: #f0e68c;
+        }
 
-            .theme-switch input:checked + label::before {
-                transform: translateX(30px);
-            }
+        .theme-switch input:checked + label::before {
+            transform: translateX(30px);
+        }
 
-            .light-theme {
-                background-color: #ffffff;
-                color: #000000;
-            }
+        .light-theme {
+            background-color: #ffffff;
+            color: #000000;
+        }
 
-            .dark-theme {
-                background-color: #000000;
-                color: #ffffff;
-            }
+        .dark-theme {
+            background-color: #000000;
+            color: #ffffff;
+        }
 
-            #map {
-                width: 100%;
-                height: 70vh; /* Prend toute la hauteur de la fenêtre */
-                display: block;
-            }
+        #map {
+            width: 100%;
+            height: 70vh; /* Prend toute la hauteur de la fenêtre */
+            display: block;
+        }
 
-        </style>
-    </head>
-    <body>
-        <div class="header">
-            <img src="images/lions_pub_full_without_background.png" alt="The Gentlemen's Pub" width="50" onclick="goToHome()">
-            <div class="title">The Gentlemen's Pub</div>
-            <div class="theme-switch">
-                <input type="checkbox" id="themeToggle">
-                <label for="themeToggle"></label>
-            </div>
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="images/lions_pub_full_without_background.png" alt="The Gentlemen's Pub" width="50" onclick="goToHome()">
+        <div class="title">The Gentlemen's Pub</div>
+        <div class="theme-switch">
+            <input type="checkbox" id="themeToggle">
+            <label for="themeToggle"></label>
         </div>
-        <div class="header">
-            <button class="btn" onclick="openHistory()">History</button>
-            <button class="btn" onclick="openActivitiesSkills()">Activities & Skills</button>
-            <button class="btn" onclick="openMarketAnalysis()">Market Analysis</button>
-            <button class="btn" onclick="showMap()">Map</button>
-            <button class="btn" onclick="showTable('societe_info_competitor')">Board Game</button>
-            <button class="btn" onclick="showTable('societe_info_vape_competitor')">Vape Store</button>
-            <button class="btn" onclick="showTable('societe_info_gameBar_competitor')">Game Bar</button>
-        </div>
+    </div>
+    <div class="header">
+        <button class="btn" onclick="openHistory()">History</button>
+        <button class="btn" onclick="openActivitiesSkills()">Activities & Skills</button>
+        <button class="btn" onclick="openMarketAnalysis()">Market Analysis</button>
+        <button class="btn" onclick="showMap()">Map</button>
+        <button class="btn" onclick="showTable('societe_info_competitor')">Board Game</button>
+        <button class="btn" onclick="showTable('societe_info_vape_competitor')">Vape Store</button>
+        <button class="btn" onclick="showTable('societe_info_gameBar_competitor')">Game Bar</button>
+    </div>
 
-        <iframe id="historyFrame" src="history.html" style="display: none; width: 100%; height: 1500px; border: none;"></iframe>
-        <iframe id="marketAnalysisFrame" src="market_analysis.html" style="display: none; width: 100%; height: 1500px; border: none;"></iframe>
-        <iframe id="activitiesSkillsFrame" src="activities_skills.html" style="display: none; width: 100%; height: 1500px; border: none;"></iframe>
-        
-        <h1 id="mapTitle">Competitor Map</h1>
-        <div id="legend" style="display: block;">
-            <input type="checkbox" id="boardGameCheckbox" checked>
-            <label for="boardGameCheckbox">Board Game</label>
-            <input type="checkbox" id="vapeStoreCheckbox" checked>
-            <label for="vapeStoreCheckbox">Vape Store</label>
-            <input type="checkbox" id="gameBarCheckbox" checked>
-            <label for="gameBarCheckbox">Game Bar</label>
-            <input type="checkbox" id="lionCheckbox" checked>
-            <label for="lionCheckbox">Lion</label>
-        </div>
-        <div id="map"></div>
-        <div id="table">
-            <table>
-                <thead>
-                    <tr id="table-headers"></tr>
-                </thead>
-                <tbody id="table-body"></tbody>
-            </table>
-        </div>
-        <script>
-            // Appliquer le thème stocké
-            document.addEventListener('DOMContentLoaded', () => {
-                const darkTheme = localStorage.getItem('dark-theme') === 'true';
-                document.body.classList.toggle('dark-theme', darkTheme);
-                document.body.classList.toggle('light-theme', !darkTheme);
-                document.getElementById('themeToggle').checked = darkTheme;
-            });
+    <iframe id="historyFrame" src="history.html" style="display: none; width: 100%; height: 1500px; border: none;"></iframe>
+    <iframe id="marketAnalysisFrame" src="market_analysis.html" style="display: none; width: 100%; height: 1500px; border: none;"></iframe>
+    <iframe id="activitiesSkillsFrame" src="activities_skills.html" style="display: none; width: 100%; height: 1500px; border: none;"></iframe>
+    
+    <h1 id="mapTitle">Competitor Map</h1>
+    <div id="legend" style="display: block;">
+        <input type="checkbox" id="boardGameCheckbox" checked>
+        <label for="boardGameCheckbox">Board Game</label>
+        <input type="checkbox" id="vapeStoreCheckbox" checked>
+        <label for="vapeStoreCheckbox">Vape Store</label>
+        <input type="checkbox" id="gameBarCheckbox" checked>
+        <label for="gameBarCheckbox">Game Bar</label>
+        <input type="checkbox" id="lionCheckbox" checked>
+        <label for="lionCheckbox">Lion</label>
+    </div>
+    <div id="map"></div>
+    <div id="table">
+        <table>
+            <thead>
+                <tr id="table-headers"></tr>
+            </thead>
+            <tbody id="table-body"></tbody>
+        </table>
+    </div>
+    <script>
+        // Appliquer le thème stocké
+        document.addEventListener('DOMContentLoaded', () => {
+            const darkTheme = localStorage.getItem('dark-theme') === 'true';
+            document.body.classList.toggle('dark-theme', darkTheme);
+            document.body.classList.toggle('light-theme', !darkTheme);
+            document.getElementById('themeToggle').checked = darkTheme;
+        });
 
-            // Gérer le changement de thème
-            document.getElementById('themeToggle').addEventListener('change', (event) => {
-                const darkTheme = event.target.checked;
-                document.body.classList.toggle('dark-theme', darkTheme);
-                document.body.classList.toggle('light-theme', !darkTheme);
-                localStorage.setItem('dark-theme', darkTheme);
+        // Gérer le changement de thème
+        document.getElementById('themeToggle').addEventListener('change', (event) => {
+            const darkTheme = event.target.checked;
+            document.body.classList.toggle('dark-theme', darkTheme);
+            document.body.classList.toggle('light-theme', !darkTheme);
+            localStorage.setItem('dark-theme', darkTheme);
 
-                // Déclencher un événement de changement de stockage pour notifier les autres pages
-                window.dispatchEvent(new Event('storage'));
-            });
+            // Déclencher un événement de changement de stockage pour notifier les autres pages
+            window.dispatchEvent(new Event('storage'));
+        });
 
-            var map = null; // Déclaration de la variable pour la carte
+        var map = null; // Déclaration de la variable pour la carte
 
-            var customIconPurple = L.icon({
-                iconUrl: 'images/tuile_generic_purple.png',
-                iconSize: [25, 41],
-                iconAnchor: [12, 41],
-                popupAnchor: [1, -34],
-                shadowSize: [41, 41]
-            });
+        var customIconPurple = L.icon({
+            iconUrl: 'images/tuile_generic_purple.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+        });
 
-            var customIconRed = L.icon({
-                iconUrl: 'images/tuile_generic_red.png',
-                iconSize: [25, 41],
-                iconAnchor: [12, 41],
-                popupAnchor: [1, -34],
-                shadowSize: [41, 41]
-            });
+        var customIconRed = L.icon({
+            iconUrl: 'images/tuile_generic_red.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+        });
 
-            var customIconBlue = L.icon({
-                iconUrl: 'images/tuile_generic_bleu.png',
-                iconSize: [25, 41],
-                iconAnchor: [12, 41],
-                popupAnchor: [1, -34],
-                shadowSize: [41, 41]
-            });
+        var customIconBlue = L.icon({
+            iconUrl: 'images/tuile_generic_bleu.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+        });
 
-            var lionIcon = L.icon({
-                iconUrl: 'images/tuile_lions.png',
-                iconSize: [25, 41],
-                iconAnchor: [12, 41],
-                popupAnchor: [1, -34],
-                shadowSize: [41, 41]
-            });
+        var lionIcon = L.icon({
+            iconUrl: 'images/tuile_lions.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+        });
 
-            var markers = {
-                boardGame: [],
-                vapeStore: [],
-                gameBar: [],
-                lion: []
-            };
+        var markers = {
+            boardGame: [],
+            vapeStore: [],
+            gameBar: [],
+            lion: []
+        };
 
-            // Variables globales pour les données préchargées
-            var preloadedData = {
-                societe_info_competitor: [],
-                societe_info_vape_competitor: [],
-                societe_info_gameBar_competitor: []
-            };
+        // Variables globales pour les données préchargées
+        var preloadedData = {
+            societe_info_competitor: [],
+            societe_info_vape_competitor: [],
+            societe_info_gameBar_competitor: []
+        };
 
-            function fetchData() {
-                fetch('fetch_data.php')
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            preloadedData.societe_info_competitor = data.data.results_societe_info_competitor;
-                            preloadedData.societe_info_vape_competitor = data.data.results_societe_info_vape_competitor;
-                            preloadedData.societe_info_gameBar_competitor = data.data.results_societe_info_gameBar_competitor;
+        function fetchData() {
+            fetch('fetch_data.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        preloadedData.societe_info_competitor = data.data.results_societe_info_competitor;
+                        preloadedData.societe_info_vape_competitor = data.data.results_societe_info_vape_competitor;
+                        preloadedData.societe_info_gameBar_competitor = data.data.results_societe_info_gameBar_competitor;
 
-                            addMarkers(preloadedData.societe_info_competitor, customIconPurple, 'boardGame');
-                            addMarkers(preloadedData.societe_info_vape_competitor, customIconRed, 'vapeStore');
-                            addMarkers(preloadedData.societe_info_gameBar_competitor, customIconBlue, 'gameBar');
-                        } else {
-                            console.error('Error:', data.error);
-                        }
-                    })
-                    .catch(error => console.error('Error fetching data:', error));
-            }
-
-            function addMarkers(data, icon, type) {
-                data.forEach(item => {
-                    var marker = L.marker([item.lat, item.long], {icon: icon})
-                        .bindPopup(item.name + "<br>" + item.formatted + "<br>" + "CA :" + item.ca_dernier + "€" );
-                    marker.addTo(map);
-                    markers[type].push(marker);
-                });
-            }
-
-            function toggleMarkers(type, show) {
-                markers[type].forEach(marker => {
-                    if (show) {
-                        marker.addTo(map);
+                        addMarkers(preloadedData.societe_info_competitor, customIconPurple, 'boardGame');
+                        addMarkers(preloadedData.societe_info_vape_competitor, customIconRed, 'vapeStore');
+                        addMarkers(preloadedData.societe_info_gameBar_competitor, customIconBlue, 'gameBar');
                     } else {
-                        map.removeLayer(marker);
+                        console.error('Error:', data.error);
                     }
-                });
-            }
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
 
-            function showMap() {
-                // Vérifie si la carte n'est pas déjà initialisée
-                if (!map) {
-                    map = L.map('map').setView([48.897891998291016, 2.0886409282684326], 12);
-
-                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                    }).addTo(map);
-
-                    var lionMarker = L.marker([48.89810237251481, 2.088903849646817], {icon: lionIcon, zIndexOffset: 1000}).addTo(map)
-                        .bindPopup("<b>The Gentlemen's Pub</b><br><img src='images/lions_pub_full.png' alt='Lions Pub' width='100'>");
-
-                    // Contrôler l'icône du Lion en fonction de l'état initial de la case à cocher
-                    document.getElementById('lionCheckbox').addEventListener('change', function() {
-                        if (this.checked) {
-                            map.addLayer(lionMarker);
-                        } else {
-                            map.removeLayer(lionMarker);
-                        }
-                    });
-
-                    // Afficher les marqueurs pour les types sélectionnés
-                    var boardGameCheckbox = document.getElementById('boardGameCheckbox');
-                    var vapeStoreCheckbox = document.getElementById('vapeStoreCheckbox');
-                    var gameBarCheckbox = document.getElementById('gameBarCheckbox');
-
-                    boardGameCheckbox.addEventListener('change', function() {
-                        toggleMarkers('boardGame', this.checked);
-                    });
-
-                    vapeStoreCheckbox.addEventListener('change', function() {
-                        toggleMarkers('vapeStore', this.checked);
-                    });
-
-                    gameBarCheckbox.addEventListener('change', function() {
-                        toggleMarkers('gameBar', this.checked);
-                    });
-
-                }
-
-                // Afficher la carte et masquer les autres éléments
-                document.getElementById("map").style.display = "block";
-                document.getElementById("table").style.display = "none";
-                document.getElementById("legend").style.display = "block";
-                document.getElementById("mapTitle").style.display = "block";
-                var marketAnalysisFrame = document.getElementById('marketAnalysisFrame');
-                if (marketAnalysisFrame) {
-                    marketAnalysisFrame.style.display = 'none';
-                }
-                var activitiesSkillsFrame = document.getElementById('activitiesSkillsFrame');
-                if (activitiesSkillsFrame) {
-                    activitiesSkillsFrame.style.display = 'none';
-                }
-                var historyFrame = document.getElementById('historyFrame');
-                if (historyFrame) {
-                    historyFrame.style.display = 'none';
-                }
-
-                // Supprimer la classe 'home' pour ne pas afficher l'image de fond
-                document.body.classList.remove('home');
-            }
-
-            function showTable(type) {
-                document.getElementById("map").style.display = "none";
-                document.getElementById("table").style.display = "block";
-                document.getElementById("legend").style.display = "none";
-                document.getElementById("mapTitle").style.display = "none";
-                var marketAnalysisFrame = document.getElementById('marketAnalysisFrame');
-                if (marketAnalysisFrame) {
-                    marketAnalysisFrame.style.display = 'none';
-                }
-                var activitiesSkillsFrame = document.getElementById('activitiesSkillsFrame');
-                if (activitiesSkillsFrame) {
-                    activitiesSkillsFrame.style.display = 'none';
-                }
-                var historyFrame = document.getElementById('historyFrame');
-                if (historyFrame) {
-                    historyFrame.style.display = 'none';
-                }
-
-            // Colonnes à sélectionner
-            const selectedColumns = ["name", "code_ape", "rue", "code_postale", "ville", "ca_dernier", "ca_annee"];
-
-            // Utiliser les données préchargées
-            function showTable(type) {
-                const data = preloadedData[type];
-                if (data && data.length > 0) {
-                    createTableHeaders(selectedColumns);
-                    createTableRows(data, selectedColumns);
-                } else {
-                    console.error('No data available for:', type);
-                }
-            }
-
-            function createTableHeaders(headers) {
-                const tableHeaders = document.getElementById('table-headers');
-                tableHeaders.innerHTML = '';
-                headers.forEach(header => {
-                    const th = document.createElement('th');
-                    th.textContent = header;
-                    tableHeaders.appendChild(th);
-                });
-            }
-
-            function createTableRows(rows, selectedColumns) {
-                const tableBody = document.getElementById('table-body');
-                tableBody.innerHTML = '';
-                rows.forEach(row => {
-                    const tr = document.createElement('tr');
-                    selectedColumns.forEach(col => {
-                        const td = document.createElement('td');
-                        td.textContent = row[col] || ''; // Assurez-vous de gérer les valeurs non définies
-                        tr.appendChild(td);
-                    });
-                    tableBody.appendChild(tr);
-                });
-            }
-
-            function openActivitiesSkills() {
-                document.getElementById("map").style.display = "none";
-                document.getElementById("table").style.display = "none";
-                document.getElementById("legend").style.display = "none";
-                document.getElementById("mapTitle").style.display = "none";
-                var marketAnalysisFrame = document.getElementById('marketAnalysisFrame');
-                if (marketAnalysisFrame) {
-                    marketAnalysisFrame.style.display = 'none';
-                }
-                var historyFrame = document.getElementById('historyFrame');
-                if (historyFrame) {
-                    historyFrame.style.display = 'none';
-                }
-                var activitiesSkillsFrame = document.getElementById('activitiesSkillsFrame');
-                if (activitiesSkillsFrame.style.display === 'none') {
-                    activitiesSkillsFrame.style.display = 'block';
-                } else {
-                    activitiesSkillsFrame.style.display = 'none';
-                }
-
-                // Supprimer la classe 'home' pour ne pas afficher l'image de fond
-                document.body.classList.remove('home');
-            }
-
-            function openMarketAnalysis() {
-                document.getElementById("map").style.display = "none";
-                document.getElementById("table").style.display = "none";
-                document.getElementById("legend").style.display = "none";
-                document.getElementById("mapTitle").style.display = "none";
-                var activitiesSkillsFrame = document.getElementById('activitiesSkillsFrame');
-                if (activitiesSkillsFrame) {
-                    activitiesSkillsFrame.style.display = 'none';
-                }
-                var historyFrame = document.getElementById('historyFrame');
-                if (historyFrame) {
-                    historyFrame.style.display = 'none';
-                }
-                var marketAnalysisFrame = document.getElementById('marketAnalysisFrame');
-                if (marketAnalysisFrame.style.display === 'none') {
-                    marketAnalysisFrame.style.display = 'block';
-                } else {
-                    marketAnalysisFrame.style.display = 'none';
-                }
-
-                // Supprimer la classe 'home' pour ne pas afficher l'image de fond
-                document.body.classList.remove('home');
-            }
-
-            function openHistory() {
-                document.getElementById("map").style.display = "none";
-                document.getElementById("table").style.display = "none";
-                document.getElementById("legend").style.display = "none";
-                document.getElementById("mapTitle").style.display = "none";
-                var activitiesSkillsFrame = document.getElementById('activitiesSkillsFrame');
-                if (activitiesSkillsFrame) {
-                    activitiesSkillsFrame.style.display = 'none';
-                }
-                var marketAnalysisFrame = document.getElementById('marketAnalysisFrame');
-                if (marketAnalysisFrame) {
-                    marketAnalysisFrame.style.display = 'none';
-                }
-                var historyFrame = document.getElementById('historyFrame');
-                if (historyFrame.style.display === 'none') {
-                    historyFrame.style.display = 'block';
-                } else {
-                    historyFrame.style.display = 'none';
-                }
-
-                // Supprimer la classe 'home' pour ne pas afficher l'image de fond
-                document.body.classList.remove('home');
-            }
-
-            function goToHome() {
-                document.getElementById("map").style.display = "none";
-                document.getElementById("table").style.display = "none";
-                document.getElementById("legend").style.display = "none";
-                document.getElementById("mapTitle").style.display = "none";
-                var marketAnalysisFrame = document.getElementById('marketAnalysisFrame');
-                if (marketAnalysisFrame) {
-                    marketAnalysisFrame.style.display = 'none';
-                }
-                var activitiesSkillsFrame = document.getElementById('activitiesSkillsFrame');
-                if (activitiesSkillsFrame) {
-                    activitiesSkillsFrame.style.display = 'none';
-                }
-                var historyFrame = document.getElementById('historyFrame');
-                if (historyFrame) {
-                    historyFrame.style.display = 'none';
-                }
-
-                // Appliquer la classe home au body pour afficher l'image de fond
-                document.body.classList.add('home');
-            }
-
-            // Fetch initial des données
-            fetchData();
-
-            // Initialiser et afficher la carte dès le chargement de la page
-            document.addEventListener('DOMContentLoaded', function() {
-                showMap();
+        function addMarkers(data, icon, type) {
+            data.forEach(item => {
+                var marker = L.marker([item.lat, item.long], {icon: icon})
+                    .bindPopup(item.name + "<br>" + item.formatted + "<br>" + "CA :" + item.ca_dernier + "€" );
+                marker.addTo(map);
+                markers[type].push(marker);
             });
         }
-        </script>
-    </body>
+
+        function toggleMarkers(type, show) {
+            markers[type].forEach(marker => {
+                if (show) {
+                    marker.addTo(map);
+                } else {
+                    map.removeLayer(marker);
+                }
+            });
+        }
+
+        function showMap() {
+            // Vérifie si la carte n'est pas déjà initialisée
+            if (!map) {
+                map = L.map('map').setView([48.897891998291016, 2.0886409282684326], 12);
+
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(map);
+
+                var lionMarker = L.marker([48.89810237251481, 2.088903849646817], {icon: lionIcon, zIndexOffset: 1000}).addTo(map)
+                    .bindPopup("<b>The Gentlemen's Pub</b><br><img src='images/lions_pub_full.png' alt='Lions Pub' width='100'>");
+
+                // Contrôler l'icône du Lion en fonction de l'état initial de la case à cocher
+                document.getElementById('lionCheckbox').addEventListener('change', function() {
+                    if (this.checked) {
+                        map.addLayer(lionMarker);
+                    } else {
+                        map.removeLayer(lionMarker);
+                    }
+                });
+
+                // Afficher les marqueurs pour les types sélectionnés
+                var boardGameCheckbox = document.getElementById('boardGameCheckbox');
+                var vapeStoreCheckbox = document.getElementById('vapeStoreCheckbox');
+                var gameBarCheckbox = document.getElementById('gameBarCheckbox');
+
+                boardGameCheckbox.addEventListener('change', function() {
+                    toggleMarkers('boardGame', this.checked);
+                });
+
+                vapeStoreCheckbox.addEventListener('change', function() {
+                    toggleMarkers('vapeStore', this.checked);
+                });
+
+                gameBarCheckbox.addEventListener('change', function() {
+                    toggleMarkers('gameBar', this.checked);
+                });
+
+            }
+
+            // Afficher la carte et masquer les autres éléments
+            document.getElementById("map").style.display = "block";
+            document.getElementById("table").style.display = "none";
+            document.getElementById("legend").style.display = "block";
+            document.getElementById("mapTitle").style.display = "block";
+            var marketAnalysisFrame = document.getElementById('marketAnalysisFrame');
+            if (marketAnalysisFrame) {
+                marketAnalysisFrame.style.display = 'none';
+            }
+            var activitiesSkillsFrame = document.getElementById('activitiesSkillsFrame');
+            if (activitiesSkillsFrame) {
+                activitiesSkillsFrame.style.display = 'none';
+            }
+            var historyFrame = document.getElementById('historyFrame');
+            if (historyFrame) {
+                historyFrame.style.display = 'none';
+            }
+
+            // Supprimer la classe 'home' pour ne pas afficher l'image de fond
+            document.body.classList.remove('home');
+        }
+
+        function showTable(type) {
+            document.getElementById("map").style.display = "none";
+            document.getElementById("table").style.display = "block";
+            document.getElementById("legend").style.display = "none";
+            document.getElementById("mapTitle").style.display = "none";
+            var marketAnalysisFrame = document.getElementById('marketAnalysisFrame');
+            if (marketAnalysisFrame) {
+                marketAnalysisFrame.style.display = 'none';
+            }
+            var activitiesSkillsFrame = document.getElementById('activitiesSkillsFrame');
+            if (activitiesSkillsFrame) {
+                activitiesSkillsFrame.style.display = 'none';
+            }
+            var historyFrame = document.getElementById('historyFrame');
+            if (historyFrame) {
+                historyFrame.style.display = 'none';
+            }
+
+            // Utiliser les données préchargées
+            const data = preloadedData[type];
+            if (data && data.length > 0) {
+                createTableHeaders(Object.keys(data[0]));
+                createTableRows(data);
+            } else {
+                console.error('No data available for:', type);
+            }
+        }
+
+        function createTableHeaders(headers) {
+            const tableHeaders = document.getElementById('table-headers');
+            tableHeaders.innerHTML = '';
+            headers.forEach(header => {
+                const th = document.createElement('th');
+                th.textContent = header;
+                tableHeaders.appendChild(th);
+            });
+        }
+
+        function createTableRows(rows) {
+            const tableBody = document.getElementById('table-body');
+            tableBody.innerHTML = '';
+            rows.forEach(row => {
+                const tr = document.createElement('tr');
+                Object.values(row).forEach(value => {
+                    const td = document.createElement('td');
+                    td.textContent = value;
+                    tr.appendChild(td);
+                });
+                tableBody.appendChild(tr);
+            });
+        }
+
+        function openActivitiesSkills() {
+            document.getElementById("map").style.display = "none";
+            document.getElementById("table").style.display = "none";
+            document.getElementById("legend").style.display = "none";
+            document.getElementById("mapTitle").style.display = "none";
+            var marketAnalysisFrame = document.getElementById('marketAnalysisFrame');
+            if (marketAnalysisFrame) {
+                marketAnalysisFrame.style.display = 'none';
+            }
+            var historyFrame = document.getElementById('historyFrame');
+            if (historyFrame) {
+                historyFrame.style.display = 'none';
+            }
+            var activitiesSkillsFrame = document.getElementById('activitiesSkillsFrame');
+            if (activitiesSkillsFrame.style.display === 'none') {
+                activitiesSkillsFrame.style.display = 'block';
+            } else {
+                activitiesSkillsFrame.style.display = 'none';
+            }
+
+            // Supprimer la classe 'home' pour ne pas afficher l'image de fond
+            document.body.classList.remove('home');
+        }
+
+        function openMarketAnalysis() {
+            document.getElementById("map").style.display = "none";
+            document.getElementById("table").style.display = "none";
+            document.getElementById("legend").style.display = "none";
+            document.getElementById("mapTitle").style.display = "none";
+            var activitiesSkillsFrame = document.getElementById('activitiesSkillsFrame');
+            if (activitiesSkillsFrame) {
+                activitiesSkillsFrame.style.display = 'none';
+            }
+            var historyFrame = document.getElementById('historyFrame');
+            if (historyFrame) {
+                historyFrame.style.display = 'none';
+            }
+            var marketAnalysisFrame = document.getElementById('marketAnalysisFrame');
+            if (marketAnalysisFrame.style.display === 'none') {
+                marketAnalysisFrame.style.display = 'block';
+            } else {
+                marketAnalysisFrame.style.display = 'none';
+            }
+
+            // Supprimer la classe 'home' pour ne pas afficher l'image de fond
+            document.body.classList.remove('home');
+        }
+
+        function openHistory() {
+            document.getElementById("map").style.display = "none";
+            document.getElementById("table").style.display = "none";
+            document.getElementById("legend").style.display = "none";
+            document.getElementById("mapTitle").style.display = "none";
+            var activitiesSkillsFrame = document.getElementById('activitiesSkillsFrame');
+            if (activitiesSkillsFrame) {
+                activitiesSkillsFrame.style.display = 'none';
+            }
+            var marketAnalysisFrame = document.getElementById('marketAnalysisFrame');
+            if (marketAnalysisFrame) {
+                marketAnalysisFrame.style.display = 'none';
+            }
+            var historyFrame = document.getElementById('historyFrame');
+            if (historyFrame.style.display === 'none') {
+                historyFrame.style.display = 'block';
+            } else {
+                historyFrame.style.display = 'none';
+            }
+
+            // Supprimer la classe 'home' pour ne pas afficher l'image de fond
+            document.body.classList.remove('home');
+        }
+
+        function goToHome() {
+            document.getElementById("map").style.display = "none";
+            document.getElementById("table").style.display = "none";
+            document.getElementById("legend").style.display = "none";
+            document.getElementById("mapTitle").style.display = "none";
+            var marketAnalysisFrame = document.getElementById('marketAnalysisFrame');
+            if (marketAnalysisFrame) {
+                marketAnalysisFrame.style.display = 'none';
+            }
+            var activitiesSkillsFrame = document.getElementById('activitiesSkillsFrame');
+            if (activitiesSkillsFrame) {
+                activitiesSkillsFrame.style.display = 'none';
+            }
+            var historyFrame = document.getElementById('historyFrame');
+            if (historyFrame) {
+                historyFrame.style.display = 'none';
+            }
+
+            // Appliquer la classe home au body pour afficher l'image de fond
+            document.body.classList.add('home');
+        }
+
+        // Fetch initial des données
+        fetchData();
+
+        // Initialiser et afficher la carte dès le chargement de la page
+        document.addEventListener('DOMContentLoaded', function() {
+            showMap();
+        });
+
+    </script>
+</body>
 </html>
