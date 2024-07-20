@@ -12,8 +12,8 @@ function geocodeAddress($address, $apiKey) {
         if ($result && $result['total_results'] > 0) {
             $firstResult = $result['results'][0];
             return [
-                'lat' => $firstResult['geometry']['lat'],
-                'long' => $firstResult['geometry']['lng'],
+                'latitude' => $firstResult['geometry']['latitude'],
+                'longitude' => $firstResult['geometry']['longitude'],
                 'formatted' => $firstResult['formatted'],
             ];
         } else {
@@ -27,23 +27,23 @@ function geocodeAddress($address, $apiKey) {
 
 function fetchDataFromTable($table, $apiKey, $conn) {
     $data = [];
-    $sql = "SELECT code_ape, name, rue, code_postal, ville, ca_dernier, ca_annee, lat, long, formatted FROM $table";
+    $sql = "SELECT code_ape, name, rue, code_postal, ville, ca_dernier, ca_annee, latitude, longitude, formatted FROM $table";
     $result = $conn->query($sql);
     
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
-            // Geocode only if lat/long are missing
-            if (empty($row['lat']) || empty($row['long'])) {
+            // Geocode only if latitude/longitude are missing
+            if (empty($row['latitude']) || empty($row['longitude'])) {
                 $address = $row['rue'] . ', ' . $row['code_postal'] . ' ' . $row['ville'];
                 $geocodedData = geocodeAddress($address, $apiKey);
                 if ($geocodedData) {
-                    $row['lat'] = $geocodedData['lat'];
-                    $row['long'] = $geocodedData['long'];
+                    $row['latitude'] = $geocodedData['latitude'];
+                    $row['longitude'] = $geocodedData['longitude'];
                     $row['formatted'] = $geocodedData['formatted'];
                     // Update database with geocoded data
-                    $updateSql = "UPDATE $table SET lat = ?, long = ?, formatted = ? WHERE code_ape = ?";
+                    $updateSql = "UPDATE $table SET latitude = ?, longitude = ?, formatted = ? WHERE code_ape = ?";
                     $stmt = $conn->prepare($updateSql);
-                    $stmt->bind_param('ddss', $row['lat'], $row['long'], $row['formatted'], $row['code_ape']);
+                    $stmt->bind_param('ddss', $row['latitude'], $row['longitude'], $row['formatted'], $row['code_ape']);
                     $stmt->execute();
                 }
             }

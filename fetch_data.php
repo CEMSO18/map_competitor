@@ -12,8 +12,8 @@ function geocodeAddress($address, $apiKey) {
         if ($result && $result['total_results'] > 0) {
             $firstResult = $result['results'][0];
             return [
-                'lat' => $firstResult['geometry']['lat'],
-                'long' => $firstResult['geometry']['lng'],
+                'latitude' => $firstResult['geometry']['latitude'],
+                'longitude' => $firstResult['geometry']['longitude'],
                 'formatted' => $firstResult['formatted'],
             ];
         } else {
@@ -35,8 +35,8 @@ function fetchDataFromTable($table, $apiKey, $conn) {
             $address = $row['rue'] . ', ' . $row['code_postal'] . ' ' . $row['ville'];
             $geocodedData = geocodeAddress($address, $apiKey);
             if ($geocodedData) {
-                $row['lat'] = $geocodedData['lat'];
-                $row['long'] = $geocodedData['long'];
+                $row['latitude'] = $geocodedData['latitude'];
+                $row['longitude'] = $geocodedData['longitude'];
                 $row['formatted'] = $geocodedData['formatted'];
             }
             $data[] = $row;
