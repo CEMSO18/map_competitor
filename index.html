@@ -132,7 +132,7 @@
         <button class="btn" onclick="openActivitiesSkills()">Activities & Skills</button>
         <button class="btn" onclick="openMarketAnalysis()">Market Analysis</button>
         <button class="btn" onclick="showMap()">Map</button>
-        <button class="btn" onclick="showTable('societe_info_competitor')">Board Game</button>
+        <button class="btn" onclick="showTable('societe_info_boardgame_competitor')">Board Game</button>
         <button class="btn" onclick="showTable('societe_info_vape_competitor')">Vape Store</button>
         <button class="btn" onclick="showTable('societe_info_gameBar_competitor')">Game Bar</button>
     </div>
@@ -224,7 +224,7 @@
 
         // Variables globales pour les données préchargées
         var preloadedData = {
-            societe_info_competitor: [],
+            societe_info_boardgame_competitor: [],
             societe_info_vape_competitor: [],
             societe_info_gameBar_competitor: []
         };
@@ -234,11 +234,11 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        preloadedData.societe_info_competitor = data.data.results_societe_info_competitor;
+                        preloadedData.societe_info_boardgame_competitor = data.data.results_societe_info_boardgame_competitor;
                         preloadedData.societe_info_vape_competitor = data.data.results_societe_info_vape_competitor;
                         preloadedData.societe_info_gameBar_competitor = data.data.results_societe_info_gameBar_competitor;
 
-                        addMarkers(preloadedData.societe_info_competitor, customIconPurple, 'boardGame');
+                        addMarkers(preloadedData.societe_info_boardgame_competitor, customIconPurple, 'boardGame');
                         addMarkers(preloadedData.societe_info_vape_competitor, customIconRed, 'vapeStore');
                         addMarkers(preloadedData.societe_info_gameBar_competitor, customIconBlue, 'gameBar');
                     } else {

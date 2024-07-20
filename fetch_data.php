@@ -59,11 +59,11 @@ if ($conn->connect_error) {
 
 $results = [];
 
-$tables = ['societe_info_competitor', 'societe_info_vape_competitor', 'societe_info_gameBar_competitor'];
+$tables = ['societe_info_boardgame_competitor', 'societe_info_vape_competitor', 'societe_info_gameBar_competitor'];
 foreach ($tables as $table) {
     $tableData = fetchDataFromTable($table, $apiKey, $conn);
-    if ($table == 'societe_info_competitor') {
-        $results['results_societe_info_competitor'] = $tableData;
+    if ($table == 'societe_info_boardgame_competitor') {
+        $results['results_societe_info_boardgame_competitor'] = $tableData;
     } else if ($table == 'societe_info_vape_competitor') {
         $results['results_societe_info_vape_competitor'] = $tableData;
     } else if ($table == 'societe_info_gameBar_competitor') {
