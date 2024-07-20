@@ -12,8 +12,8 @@ function geocodeAddress($address, $apiKey) {
         if ($result && $result['total_results'] > 0) {
             $firstResult = $result['results'][0];
             return [
-                'latitude' => $firstResult['geometry']['latitude'],
-                'longitude' => $firstResult['geometry']['longitude'],
+                'latitude' => $firstResult['geometry']['lat'],
+                'longitude' => $firstResult['geometry']['lng'],
                 'formatted' => $firstResult['formatted'],
             ];
         } else {
