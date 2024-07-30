@@ -38,7 +38,7 @@ function fetchDataFromTable($table, $apiKey, $conn) {
                 $geocodedData = geocodeAddress($address, $apiKey);
                 if ($geocodedData) {
                     $row['latitude'] = $geocodedData['latitude'];
-                    $row['longitude'] = $geocodedData['longitude'];
+                    $row['longitude'] = $geocodedData['lng'];
                     $row['formatted'] = $geocodedData['formatted'];
                     // Update database with geocoded data
                     $updateSql = "UPDATE $table SET latitude = ?, longitude = ?, formatted = ? WHERE code_ape = ?";
