@@ -36,7 +36,7 @@ function fetchDataFromTable($table, $apiKey, $conn) {
             $geocodedData = geocodeAddress($address, $apiKey);
             if ($geocodedData) {
                 $row['latitude'] = $geocodedData['lat'];
-                $row['longitude'] = $geocodedData['lng'];
+                $row['lng'] = $geocodedData['lng'];
                 $row['formatted'] = $geocodedData['formatted'];
             }
             $data[] = $row;
@@ -59,7 +59,7 @@ if ($conn->connect_error) {
 
 $results = [];
 
-$tables = ['societe_info_boardgame_competitor', 'societe_info_vape_competitor', 'societe_info_gameBar_competitor'];
+$tables = ['societe_info_boardgame_competitor', 'societe_info_vape_competitor', 'societe_info_gamebar_competitor'];
 foreach ($tables as $table) {
     $tableData = fetchDataFromTable($table, $apiKey, $conn);
     if ($table == 'societe_info_boardgame_competitor') {
