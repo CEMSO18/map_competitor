@@ -13,7 +13,7 @@ function geocodeAddress($address, $apiKey) {
             $firstResult = $result['results'][0];
             return [
                 'latitude' => $firstResult['geometry']['lat'],
-                'longitude' => $firstResult['geometry']['lng'],
+                'lng' => $firstResult['geometry']['lng'],
                 'formatted' => $firstResult['formatted'],
             ];
         } else {
