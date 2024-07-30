@@ -66,8 +66,8 @@ foreach ($tables as $table) {
         $results['results_societe_info_boardgame_competitor'] = $tableData;
     } else if ($table == 'societe_info_vape_competitor') {
         $results['results_societe_info_vape_competitor'] = $tableData;
-    } else if ($table == 'societe_info_gameBar_competitor') {
-        $results['results_societe_info_gameBar_competitor'] = $tableData;
+    } else if ($table == 'societe_info_gamebar_competitor') {
+        $results['results_societe_info_gamebar_competitor'] = $tableData;
     }
 }
 

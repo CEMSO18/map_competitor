@@ -65,7 +65,7 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-$results = fetchDataFromTable('societe_info_gameBar_competitor', $apiKey, $conn);
+$results = fetchDataFromTable('societe_info_gamebar_competitor', $apiKey, $conn);
 
 if (!empty($results)) {
     echo json_encode(['success' => true, 'data' => $results]);
