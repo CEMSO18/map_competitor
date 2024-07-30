@@ -12,7 +12,7 @@ function geocodeAddress($address, $apiKey) {
         if ($result && $result['total_results'] > 0) {
             $firstResult = $result['results'][0];
             return [
-                'latitude' => $firstResult['geometry']['lat'],
+                'lat' => $firstResult['geometry']['lat'],
                 'lng' => $firstResult['geometry']['lng'],
                 'formatted' => $firstResult['formatted'],
             ];
@@ -27,23 +27,23 @@ function geocodeAddress($address, $apiKey) {
 
 function fetchDataFromTable($table, $apiKey, $conn) {
     $data = [];
-    $sql = "SELECT code_ape, designation, rue, code_postal, ville, ca_dernier, ca_annee, latitude, lng, formatted FROM $table";
+    $sql = "SELECT code_ape, designation, rue, code_postal, ville, ca_dernier, ca_annee, lat, lng, formatted FROM $table";
     $result = $conn->query($sql);
     
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
             // Geocode only if latitude/longitude are missing
-            if (empty($row['latitude']) || empty($row['lng'])) {
+            if (empty($row['lat']) || empty($row['lng'])) {
                 $address = $row['rue'] . ', ' . $row['code_postal'] . ' ' . $row['ville'];
                 $geocodedData = geocodeAddress($address, $apiKey);
                 if ($geocodedData) {
-                    $row['latitude'] = $geocodedData['latitude'];
+                    $row['lat'] = $geocodedData['lat'];
                     $row['lng'] = $geocodedData['lng'];
                     $row['formatted'] = $geocodedData['formatted'];
                     // Update database with geocoded data
-                    $updateSql = "UPDATE $table SET latitude = ?, lng = ?, formatted = ? WHERE code_ape = ?";
+                    $updateSql = "UPDATE $table SET lat = ?, lng = ?, formatted = ? WHERE code_ape = ?";
                     $stmt = $conn->prepare($updateSql);
-                    $stmt->bind_param('ddss', $row['latitude'], $row['lng'], $row['formatted'], $row['code_ape']);
+                    $stmt->bind_param('ddss', $row['lat'], $row['lng'], $row['formatted'], $row['code_ape']);
                     $stmt->execute();
                 }
             }
