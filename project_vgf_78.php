@@ -3,6 +3,52 @@ require 'vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
+class ExcelTableRenderer {
+    public static function getCellStyle($cell) {
+        $style = '';
+        try {
+            $fill = $cell->getStyle()->getFill();
+            $color = $fill->getStartColor()->getRGB();
+            if ($color) {
+                $style .= 'background-color: #' . $color . ';';
+            }
+        } catch (Exception $e) {
+            // Gérer les erreurs liées à la récupération des styles
+        }
+
+        try {
+            $border = $cell->getStyle()->getBorders();
+            $borderStyle = $border->getAllBorders()->getBorderStyle();
+            if ($borderStyle) {
+                $style .= 'border: ' . $borderStyle . ' 1px solid black;';
+            }
+        } catch (Exception $e) {
+            // Gérer les erreurs liées à la récupération des bordures
+        }
+
+        return $style;
+    }
+
+    public static function formatCellValue($cell) {
+        $value = $cell->getCalculatedValue(); // Obtenir la valeur calculée
+        if (is_string($value)) {
+            return htmlspecialchars($value); // Retourner la chaîne telle quelle
+        }
+
+        if (is_numeric($value)) {
+            // Appliquer le format de nombre
+            $format = $cell->getStyle()->getNumberFormat()->getFormatCode();
+            if (preg_match('/^\s*[$€]/', $format)) {
+                return '€' . number_format($value, 2, ',', ' ');
+            } else {
+                return number_format($value, 2, ',', ' ');
+            }
+        }
+
+        return htmlspecialchars($value); // Pour les autres types de valeurs
+    }
+}
+
 $inputFileName = 'C:/Users/csoquet.NIKITA0/Documents/GitHub/map_competitor/document/projet_vapo_game_food_78.xlsx'; // Chemin vers votre fichier Excel
 
 try {
@@ -50,52 +96,6 @@ try {
             echo '<h2>' . htmlspecialchars($table->getName()) . '</h2>';
             echo '<table>';
 
-            // Fonction pour obtenir le style de la cellule
-            function getCellStyle($cell) {
-                $style = '';
-                try {
-                    $fill = $cell->getStyle()->getFill();
-                    $color = $fill->getStartColor()->getRGB();
-                    if ($color) {
-                        $style .= 'background-color: #' . $color . ';';
-                    }
-                } catch (Exception $e) {
-                    // Gérer les erreurs liées à la récupération des styles
-                }
-
-                try {
-                    $border = $cell->getStyle()->getBorders();
-                    $borderStyle = $border->getAllBorders()->getBorderStyle();
-                    if ($borderStyle) {
-                        $style .= 'border: ' . $borderStyle . ' 1px solid black;';
-                    }
-                } catch (Exception $e) {
-                    // Gérer les erreurs liées à la récupération des bordures
-                }
-
-                return $style;
-            }
-
-            // Fonction pour formater les nombres
-            function formatCellValue($cell) {
-                $value = $cell->getCalculatedValue(); // Obtenir la valeur calculée
-                if (is_string($value)) {
-                    return htmlspecialchars($value); // Retourner la chaîne telle quelle
-                }
-
-                if (is_numeric($value)) {
-                    // Appliquer le format de nombre
-                    $format = $cell->getStyle()->getNumberFormat()->getFormatCode();
-                    if (preg_match('/^\s*[$€]/', $format)) {
-                        return '€' . number_format($value, 2, ',', ' ');
-                    } else {
-                        return number_format($value, 2, ',', ' ');
-                    }
-                }
-
-                return htmlspecialchars($value); // Pour les autres types de valeurs
-            }
-
             // Afficher les noms des colonnes
             $header = true;
             foreach ($tableData as $rowNum => $row) {
@@ -103,12 +103,12 @@ try {
                 foreach ($row as $col => $cellValue) {
                     $cellCoordinate = $col . $rowNum;
                     $cellObject = $sheet->getCell($cellCoordinate);
-                    $style = getCellStyle($cellObject);
+                    $style = ExcelTableRenderer::getCellStyle($cellObject);
 
                     if ($header) {
-                        echo '<th style="' . $style . '">' . formatCellValue($cellObject) . '</th>';
+                        echo '<th style="' . $style . '">' . ExcelTableRenderer::formatCellValue($cellObject) . '</th>';
                     } else {
-                        echo '<td style="' . $style . '">' . formatCellValue($cellObject) . '</td>';
+                        echo '<td style="' . $style . '">' . ExcelTableRenderer::formatCellValue($cellObject) . '</td>';
                     }
                 }
                 echo '</tr>';
