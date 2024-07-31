@@ -96,6 +96,20 @@ try {
         return $style;
     }
 
+    // Fonction pour formater les nombres
+    function formatCellValue($cell) {
+        $value = $cell->getCalculatedValue();
+        $style = $cell->getStyle()->getNumberFormat()->getFormatCode();
+        
+        if (preg_match('/^€/', $style)) {
+            // Format "comptabilité" ou monétaire avec €
+            return '€' . number_format($value, 2, ',', ' ');
+        } else {
+            // Format numérique par défaut
+            return number_format($value, 2, ',', ' ');
+        }
+    }
+
     // Afficher les données du tableau avec mise en forme
     foreach ($tableData as $rowNum => $row) {
         echo '<tr>';
@@ -103,8 +117,8 @@ try {
             $cellCoordinate = $col . $rowNum;
             $cellObject = $sheet->getCell($cellCoordinate);
             $style = getCellStyle($cellObject);
-            $calculatedValue = $calculatedData[$rowNum][$col];
-            echo '<td style="' . $style . '">' . htmlspecialchars($calculatedValue) . '</td>';
+            $formattedValue = formatCellValue($cellObject);
+            echo '<td style="' . $style . '">' . htmlspecialchars($formattedValue) . '</td>';
         }
         echo '</tr>';
     }
