@@ -90,7 +90,7 @@ try {
 
     // Fonction pour formater les nombres
     function formatCellValue($cell) {
-        $value = $cell->getCalculatedValue();
+        $value = $cell->getCalculatedValue(); // Obtenir la valeur calculée
         if (is_string($value)) {
             return htmlspecialchars($value); // Retourner la chaîne telle quelle
         }
