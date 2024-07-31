@@ -34,17 +34,6 @@ try {
     $range = $table->getRange();
     $tableData = $sheet->rangeToArray($range, null, true, true, true);
 
-    // Évaluer les formules et récupérer les valeurs calculées
-    $calculatedData = [];
-    foreach ($sheet->getRowIterator() as $row) {
-        $rowIndex = $row->getRowIndex();
-        foreach ($row->getCellIterator() as $cell) {
-            $colIndex = $cell->getColumn();
-            $cellValue = $sheet->getCell($colIndex . $rowIndex)->getCalculatedValue();
-            $calculatedData[$rowIndex][$colIndex] = $cellValue;
-        }
-    }
-
     // Générer du HTML
     echo '<!DOCTYPE html>
     <html lang="en">
@@ -64,13 +53,16 @@ try {
                 padding: 8px;
                 text-align: left;
             }
+            .header {
+                font-weight: bold;
+            }
         </style>
     </head>
     <body>
         <h1>Contenu du Tableau: ' . htmlspecialchars($tableName) . '</h1>
         <table>';
 
-    // Fonction pour obtenir le style de la cellule (simplifiée)
+    // Fonction pour obtenir le style de la cellule
     function getCellStyle($cell) {
         $style = '';
         try {
@@ -99,34 +91,37 @@ try {
     // Fonction pour formater les nombres
     function formatCellValue($cell) {
         $value = $cell->getCalculatedValue();
-        $format = $cell->getStyle()->getNumberFormat()->getFormatCode();
-
-        // Convertir la valeur en nombre si ce n'est pas déjà fait
         if (is_string($value)) {
             $value = floatval($value);
         }
 
         // Appliquer le format de nombre
+        $format = $cell->getStyle()->getNumberFormat()->getFormatCode();
         if (preg_match('/^\s*[$€]/', $format)) {
-            // Format monétaire
             return '€' . number_format($value, 2, ',', ' ');
         } else {
-            // Format numérique par défaut
             return number_format($value, 2, ',', ' ');
         }
     }
 
-    // Afficher les données du tableau avec mise en forme
+    // Afficher les noms des colonnes
+    $header = true;
     foreach ($tableData as $rowNum => $row) {
         echo '<tr>';
         foreach ($row as $col => $cell) {
             $cellCoordinate = $col . $rowNum;
             $cellObject = $sheet->getCell($cellCoordinate);
             $style = getCellStyle($cellObject);
-            $formattedValue = formatCellValue($cellObject);
-            echo '<td style="' . $style . '">' . htmlspecialchars($formattedValue) . '</td>';
+
+            if ($header) {
+                echo '<th style="' . $style . '">' . htmlspecialchars($cell) . '</th>';
+            } else {
+                $formattedValue = formatCellValue($cellObject);
+                echo '<td style="' . $style . '">' . htmlspecialchars($formattedValue) . '</td>';
+            }
         }
         echo '</tr>';
+        $header = false; // Pour ne pas afficher la première ligne comme entête après la première itération
     }
 
     echo '</table>
