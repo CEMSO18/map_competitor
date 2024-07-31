@@ -2,8 +2,7 @@
 require 'vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
-use PhpOffice\PhpSpreadsheet\NamedRange;
-use PhpOffice\PhpSpreadsheet\Worksheet\Table\Table;
+use PhpOffice\PhpSpreadsheet\Worksheet\Table;
 
 $inputFileName = 'C:/Users/csoquet.NIKITA0/Documents/GitHub/map_competitor/document/projet_vapo_game_food_78.xlsx'; // Chemin vers votre fichier Excel
 
@@ -36,6 +35,17 @@ try {
     $range = $table->getRange();
     $tableData = $sheet->rangeToArray($range, null, true, true, true);
 
+    // Évaluer les formules et récupérer les valeurs calculées
+    $calculatedData = [];
+    foreach ($sheet->getRowIterator() as $row) {
+        $rowIndex = $row->getRowIndex();
+        foreach ($row->getCellIterator() as $cell) {
+            $colIndex = $cell->getColumn();
+            $cellValue = $sheet->getCell($colIndex . $rowIndex)->getCalculatedValue();
+            $calculatedData[$rowIndex][$colIndex] = $cellValue;
+        }
+    }
+
     // Générer du HTML
     echo '<!DOCTYPE html>
     <html lang="en">
@@ -62,10 +72,11 @@ try {
         <table>';
     
     // Afficher les données du tableau dans une table HTML
-    foreach ($tableData as $row) {
+    foreach ($tableData as $rowNum => $row) {
         echo '<tr>';
-        foreach ($row as $cell) {
-            echo '<td>' . htmlspecialchars($cell) . '</td>';
+        foreach ($row as $col => $cell) {
+            $calculatedValue = $calculatedData[$rowNum][$col];
+            echo '<td>' . htmlspecialchars($calculatedValue) . '</td>';
         }
         echo '</tr>';
     }
