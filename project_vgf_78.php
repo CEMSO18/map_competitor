@@ -10,8 +10,10 @@ class ExcelTableRenderer {
 
         // Couleur de fond
         $fill = $styleArray->getFill()->getStartColor()->getRGB();
-        if ($fill != '000000') { // Ne pas appliquer le noir par défaut
+        if ($fill != '000000' && $fill != 'FFFFFF') { // Ne pas appliquer le noir ou blanc par défaut
             $style .= 'background-color: #' . $fill . ';';
+        } else {
+            $style .= 'background-color: #FFFFFF;'; // Assurez-vous que le fond est toujours blanc
         }
 
         // Bordures
@@ -42,7 +44,7 @@ class ExcelTableRenderer {
             $style .= 'text-decoration: underline;';
         }
         $fontColor = $font->getColor()->getRGB();
-        if ($fontColor) {
+        if ($fontColor && $fontColor != '000000') {
             $style .= 'color: #' . $fontColor . ';';
         }
 
@@ -87,6 +89,7 @@ try {
                 width: 100%;
                 border-collapse: collapse;
                 margin-bottom: 20px;
+                background-color: #FFFFFF; /* Assurez-vous que le fond est toujours blanc */
             }
             table, th, td {
                 border: 1px solid black;
@@ -101,10 +104,10 @@ try {
                 font-weight: bold;
             }
             .odd-row {
-                background-color: white; /* Blanc pour les lignes impaires */
+                background-color: #FFFFFF; /* Blanc pour les lignes impaires */
             }
             .even-row {
-                background-color: #f2f2f2; /* Gris clair pour les lignes paires */
+                background-color: #FFFFFF; /* Blanc pour les lignes paires */
             }
         </style>
     </head>
