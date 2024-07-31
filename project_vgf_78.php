@@ -5,17 +5,10 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class ExcelTableRenderer {
     public static function getCellStyle($cell) {
-        $styleArray = $cell->getStyle();
         $style = '';
 
-        // Couleur de fond
-        $fill = $styleArray->getFill()->getStartColor()->getRGB();
-        if ($fill != '000000') { // Ne pas appliquer le noir par défaut
-            $style .= 'background-color: #' . $fill . ';';
-        }
-
         // Bordures
-        $borders = $styleArray->getBorders();
+        $borders = $cell->getStyle()->getBorders();
         foreach (['top', 'right', 'bottom', 'left'] as $borderPosition) {
             $border = $borders->{'get' . ucfirst($borderPosition)}();
             if ($border->getBorderStyle() !== \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_NONE) {
@@ -24,12 +17,12 @@ class ExcelTableRenderer {
         }
 
         // Alignement
-        $alignment = $styleArray->getAlignment();
+        $alignment = $cell->getStyle()->getAlignment();
         $style .= 'text-align: ' . $alignment->getHorizontal() . ';';
         $style .= 'vertical-align: ' . $alignment->getVertical() . ';';
 
         // Polices
-        $font = $styleArray->getFont();
+        $font = $cell->getStyle()->getFont();
         $style .= 'font-family: ' . $font->getName() . ';';
         $style .= 'font-size: ' . $font->getSize() . 'pt;';
         if ($font->getBold()) {
@@ -41,10 +34,7 @@ class ExcelTableRenderer {
         if ($font->getUnderline() !== \PhpOffice\PhpSpreadsheet\Style\Font::UNDERLINE_NONE) {
             $style .= 'text-decoration: underline;';
         }
-        $fontColor = $font->getColor()->getRGB();
-        if ($fontColor) {
-            $style .= 'color: #' . $fontColor . ';';
-        }
+        $style .= 'color: #000000;'; // Assurer que le texte est noir
 
         return $style;
     }
@@ -87,6 +77,7 @@ try {
                 width: 100%;
                 border-collapse: collapse;
                 margin-bottom: 20px;
+                background-color: #FFFFFF; /* Assurer que le fond est toujours blanc */
             }
             table, th, td {
                 border: 1px solid black;
@@ -94,22 +85,19 @@ try {
             th, td {
                 padding: 8px;
                 text-align: left;
+                background-color: #FFFFFF; /* Assurer que le fond est toujours blanc */
+                color: #000000; /* Assurer que le texte est noir */
             }
             .header {
                 background-color: #007BFF; /* Bleu pour les en-têtes */
                 color: white;
                 font-weight: bold;
             }
-            .odd-row {
-                background-color: white; /* Blanc pour les lignes impaires */
-            }
-            .even-row {
-                background-color: #f2f2f2; /* Gris clair pour les lignes paires */
-            }
         </style>
+
     </head>
     <body>
-        <h1>Présentation des estimation financières</h1>';
+        <h1>Présentation des estimations financières</h1>';
 
     // Parcourir toutes les feuilles
     foreach ($spreadsheet->getSheetNames() as $sheetName) {
@@ -126,9 +114,8 @@ try {
 
             // Afficher les noms des colonnes
             $header = true;
-            $rowIndex = 0;
             foreach ($tableData as $rowNum => $row) {
-                $rowClass = $header ? 'header' : ($rowIndex % 2 == 0 ? 'even-row' : 'odd-row');
+                $rowClass = $header ? 'header' : '';
                 echo '<tr class="' . $rowClass . '">';
                 foreach ($row as $col => $cellValue) {
                     $cellCoordinate = $col . $rowNum;
@@ -143,7 +130,6 @@ try {
                 }
                 echo '</tr>';
                 $header = false; // Pour ne pas afficher la première ligne comme en-tête après la première itération
-                $rowIndex++;
             }
 
             echo '</table>';
