@@ -5,25 +5,45 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class ExcelTableRenderer {
     public static function getCellStyle($cell) {
+        $styleArray = $cell->getStyle();
         $style = '';
-        try {
-            $fill = $cell->getStyle()->getFill();
-            $color = $fill->getStartColor()->getRGB();
-            if ($color) {
-                $style .= 'background-color: #' . $color . ';';
-            }
-        } catch (Exception $e) {
-            // Gérer les erreurs liées à la récupération des styles
+
+        // Couleur de fond
+        $fill = $styleArray->getFill()->getStartColor()->getRGB();
+        if ($fill) {
+            $style .= 'background-color: #' . $fill . ';';
         }
 
-        try {
-            $border = $cell->getStyle()->getBorders();
-            $borderStyle = $border->getAllBorders()->getBorderStyle();
-            if ($borderStyle) {
-                $style .= 'border: ' . $borderStyle . ' 1px solid black;';
+        // Bordures
+        $borders = $styleArray->getBorders();
+        foreach (['top', 'right', 'bottom', 'left'] as $borderPosition) {
+            $border = $borders->{'get' . ucfirst($borderPosition)}();
+            if ($border->getBorderStyle() !== \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_NONE) {
+                $style .= 'border-' . $borderPosition . ': 1px solid #' . $border->getColor()->getRGB() . ';';
             }
-        } catch (Exception $e) {
-            // Gérer les erreurs liées à la récupération des bordures
+        }
+
+        // Alignement
+        $alignment = $styleArray->getAlignment();
+        $style .= 'text-align: ' . $alignment->getHorizontal() . ';';
+        $style .= 'vertical-align: ' . $alignment->getVertical() . ';';
+
+        // Polices
+        $font = $styleArray->getFont();
+        $style .= 'font-family: ' . $font->getName() . ';';
+        $style .= 'font-size: ' . $font->getSize() . 'pt;';
+        if ($font->getBold()) {
+            $style .= 'font-weight: bold;';
+        }
+        if ($font->getItalic()) {
+            $style .= 'font-style: italic;';
+        }
+        if ($font->getUnderline() !== \PhpOffice\PhpSpreadsheet\Style\Font::UNDERLINE_NONE) {
+            $style .= 'text-decoration: underline;';
+        }
+        $fontColor = $font->getColor()->getRGB();
+        if ($fontColor) {
+            $style .= 'color: #' . $fontColor . ';';
         }
 
         return $style;
@@ -61,7 +81,7 @@ try {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Afficher le contenu des tableaux Excel</title>
+        <title>Financial estimate</title>
         <style>
             table {
                 width: 100%;
@@ -81,7 +101,7 @@ try {
         </style>
     </head>
     <body>
-        <h1>Contenu des Tableaux du Fichier Excel</h1>';
+        <h1>Présentation des estimations financières</h1>';
     
     // Parcourir toutes les feuilles
     foreach ($spreadsheet->getSheetNames() as $sheetName) {
