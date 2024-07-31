@@ -18,6 +18,10 @@ class ComposerStaticInit2980e7e0c5dbbac3dc2c347ddedfe3e6
             'Psr\\Http\\Client\\' => 16,
             'PhpOffice\\PhpSpreadsheet\\' => 25,
         ),
+        'O' => 
+        array (
+            'OpenCage\\Geocoder\\' => 18,
+        ),
         'M' => 
         array (
             'Matrix\\' => 7,
@@ -53,6 +57,10 @@ class ComposerStaticInit2980e7e0c5dbbac3dc2c347ddedfe3e6
         'PhpOffice\\PhpSpreadsheet\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpoffice/phpspreadsheet/src/PhpSpreadsheet',
+        ),
+        'OpenCage\\Geocoder\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/opencage/geocode/src',
         ),
         'Matrix\\' => 
         array (
