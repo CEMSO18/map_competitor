@@ -74,7 +74,7 @@ $inputFileName = 'C:/Users/csoquet.NIKITA0/Documents/GitHub/map_competitor/docum
 try {
     // Charger le fichier Excel
     $spreadsheet = IOFactory::load($inputFileName);
-    
+
     // Générer du HTML
     echo '<!DOCTYPE html>
     <html lang="en">
@@ -109,13 +109,13 @@ try {
         </style>
     </head>
     <body>
-        <h1>Présentation des estimations financières</h1>';
-    
+        <h1>Présentation des estimation financières</h1>';
+
     // Parcourir toutes les feuilles
     foreach ($spreadsheet->getSheetNames() as $sheetName) {
         $spreadsheet->setActiveSheetIndexByName($sheetName);
         $sheet = $spreadsheet->getActiveSheet();
-        
+
         // Parcourir tous les tableaux de la feuille
         foreach ($sheet->getTableCollection() as $table) {
             $range = $table->getRange();
