@@ -138,6 +138,7 @@
         <button class="btn" onclick="openActivitiesSkills()">Activities & Skills</button>
         <button class="btn" onclick="openMarketAnalysis()">Market Analysis</button>
         <button class="btn" onclick="openFinancialPlan()">Financial Plan</button>
+        <button class="btn" onclick="openFinancialEstimate()">Financial Estimate</button>
         <button class="btn" onclick="showMap()">Map</button>
         <button class="btn" onclick="showTable('societe_info_boardgame_competitor')">Board Game</button>
         <button class="btn" onclick="showTable('societe_info_vape_competitor')">Vape Store</button>
@@ -148,6 +149,7 @@
     <iframe id="marketAnalysisFrame" src="market_analysis.html" style="display: none; width: 100%; height: 1500px; border: none;"></iframe>
     <iframe id="activitiesSkillsFrame" src="activities_skills.html" style="display: none; width: 100%; height: 1500px; border: none;"></iframe>
     <iframe id="financialPlanFrame" src="financial_plan.html" style="display: none; width: 100%; height: 1500px; border: none;"></iframe>
+    <iframe id="financialEstimateFrame" src="project_vgf_78.php" style="display: none; width: 100%; height: 1500px; border: none;"></iframe>
 
     <h1 id="mapTitle">Competitor Map</h1>
     <div id="legend" style="display: block;">
@@ -336,6 +338,10 @@
             if (financialPlanFrame) {
                 financialPlanFrame.style.display = 'none';
             }
+            var financialEstimateFrame = document.getElementById('financialEstimateFrame');
+            if (financialEstimateFrame) {
+                financialEstimateFrame.style.display = 'none';
+            }
 
             // Supprimer la classe 'home' pour ne pas afficher l'image de fond
             document.body.classList.remove('home');
@@ -361,6 +367,10 @@
             var financialPlanFrame = document.getElementById('financialPlanFrame');
             if (financialPlanFrame) {
                 financialPlanFrame.style.display = 'none';
+            }
+            var financialEstimateFrame = document.getElementById('financialEstimateFrame');
+            if (financialEstimateFrame) {
+                financialEstimateFrame.style.display = 'none';
             }
 
             // Utiliser les données préchargées
@@ -414,6 +424,10 @@
             if (financialPlanFrame) {
                 financialPlanFrame.style.display = 'none';
             }
+            var financialEstimateFrame = document.getElementById('financialEstimateFrame');
+            if (financialEstimateFrame) {
+                financialEstimateFrame.style.display = 'none';
+            }
             var activitiesSkillsFrame = document.getElementById('activitiesSkillsFrame');
             if (activitiesSkillsFrame.style.display === 'none') {
                 activitiesSkillsFrame.style.display = 'block';
@@ -441,6 +455,10 @@
             var financialPlanFrame = document.getElementById('financialPlanFrame');
             if (financialPlanFrame) {
                 financialPlanFrame.style.display = 'none';
+            }
+            var financialEstimateFrame = document.getElementById('financialEstimateFrame');
+            if (financialEstimateFrame) {
+                financialEstimateFrame.style.display = 'none';
             }
             var marketAnalysisFrame = document.getElementById('marketAnalysisFrame');
             if (marketAnalysisFrame.style.display === 'none') {
@@ -470,6 +488,10 @@
             if (financialPlanFrame) {
                 financialPlanFrame.style.display = 'none';
             }
+            var financialEstimateFrame = document.getElementById('financialEstimateFrame');
+            if (financialEstimateFrame) {
+                financialEstimateFrame.style.display = 'none';
+            }
             var historyFrame = document.getElementById('historyFrame');
             if (historyFrame.style.display === 'none') {
                 historyFrame.style.display = 'block';
@@ -498,11 +520,46 @@
             if (historyFrame) {
                 historyFrame.style.display = 'none';
             }
+            var financialEstimateFrame = document.getElementById('financialEstimateFrame');
+            if (financialEstimateFrame) {
+                financialEstimateFrame.style.display = 'none';
+            }
             var financialPlanFrame = document.getElementById('financialPlanFrame');
             if (financialPlanFrame.style.display === 'none') {
                 financialPlanFrame.style.display = 'block';
             } else {
                 financialPlanFrame.style.display = 'none';
+            }
+
+            // Supprimer la classe 'home' pour ne pas afficher l'image de fond
+            document.body.classList.remove('home');
+        }
+        function openFinancialEstimate() {
+            document.getElementById("map").style.display = "none";
+            document.getElementById("table").style.display = "none";
+            document.getElementById("legend").style.display = "none";
+            document.getElementById("mapTitle").style.display = "none";
+            var activitiesSkillsFrame = document.getElementById('activitiesSkillsFrame');
+            if (activitiesSkillsFrame) {
+                activitiesSkillsFrame.style.display = 'none';
+            }
+            var marketAnalysisFrame = document.getElementById('marketAnalysisFrame');
+            if (marketAnalysisFrame) {
+                marketAnalysisFrame.style.display = 'none';
+            }
+            var historyFrame = document.getElementById('historyFrame');
+            if (historyFrame) {
+                historyFrame.style.display = 'none';
+            }
+            var financialPlanFrame = document.getElementById('financialPlanFrame');
+            if (financialPlanFrame) {
+                financialPlanFrame.style.display = 'none';
+            }
+            var financialEstimateFrame = document.getElementById('financialEstimateFrame');
+            if (financialEstimateFrame.style.display === 'none') {
+                financialEstimateFrame.style.display = 'block';
+            } else {
+                financialEstimateFrame.style.display = 'none';
             }
 
             // Supprimer la classe 'home' pour ne pas afficher l'image de fond
