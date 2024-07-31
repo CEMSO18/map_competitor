@@ -2,7 +2,6 @@
 require 'vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
-use PhpOffice\PhpSpreadsheet\Worksheet\Table\Table;
 
 $inputFileName = 'C:/Users/csoquet.NIKITA0/Documents/GitHub/map_competitor/document/projet_vapo_game_food_78.xlsx'; // Chemin vers votre fichier Excel
 
@@ -71,19 +70,27 @@ try {
         <h1>Contenu du Tableau: ' . htmlspecialchars($tableName) . '</h1>
         <table>';
 
-    // Fonction pour obtenir le style de la cellule
+    // Fonction pour obtenir le style de la cellule (simplifiée)
     function getCellStyle($cell) {
         $style = '';
-        $fill = $cell->getStyle()->getFill();
-        $color = $fill->getStartColor()->getRGB();
-        if ($color) {
-            $style .= 'background-color: #' . $color . ';';
+        try {
+            $fill = $cell->getStyle()->getFill();
+            $color = $fill->getStartColor()->getRGB();
+            if ($color) {
+                $style .= 'background-color: #' . $color . ';';
+            }
+        } catch (Exception $e) {
+            // Gérer les erreurs liées à la récupération des styles
         }
 
-        $border = $cell->getStyle()->getBorders();
-        $borderStyle = $border->getAllBorders()->getBorderStyle();
-        if ($borderStyle) {
-            $style .= 'border: ' . $borderStyle . ' 1px solid black;';
+        try {
+            $border = $cell->getStyle()->getBorders();
+            $borderStyle = $border->getAllBorders()->getBorderStyle();
+            if ($borderStyle) {
+                $style .= 'border: ' . $borderStyle . ' 1px solid black;';
+            }
+        } catch (Exception $e) {
+            // Gérer les erreurs liées à la récupération des bordures
         }
 
         return $style;
