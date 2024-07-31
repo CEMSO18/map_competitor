@@ -8,3 +8,8 @@
         }
     }
 }
+{
+    "require": {
+        "phpoffice/phpspreadsheet": "^2.2"
+    }
+}
