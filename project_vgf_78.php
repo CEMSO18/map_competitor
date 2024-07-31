@@ -92,16 +92,20 @@ try {
     function formatCellValue($cell) {
         $value = $cell->getCalculatedValue();
         if (is_string($value)) {
-            $value = floatval($value);
+            return htmlspecialchars($value); // Retourner la chaîne telle quelle
         }
 
-        // Appliquer le format de nombre
-        $format = $cell->getStyle()->getNumberFormat()->getFormatCode();
-        if (preg_match('/^\s*[$€]/', $format)) {
-            return '€' . number_format($value, 2, ',', ' ');
-        } else {
-            return number_format($value, 2, ',', ' ');
+        if (is_numeric($value)) {
+            // Appliquer le format de nombre
+            $format = $cell->getStyle()->getNumberFormat()->getFormatCode();
+            if (preg_match('/^\s*[$€]/', $format)) {
+                return '€' . number_format($value, 2, ',', ' ');
+            } else {
+                return number_format($value, 2, ',', ' ');
+            }
         }
+
+        return htmlspecialchars($value); // Pour les autres types de valeurs
     }
 
     // Afficher les noms des colonnes
@@ -114,10 +118,9 @@ try {
             $style = getCellStyle($cellObject);
 
             if ($header) {
-                echo '<th style="' . $style . '">' . htmlspecialchars($cell) . '</th>';
+                echo '<th style="' . $style . '">' . formatCellValue($cellObject) . '</th>';
             } else {
-                $formattedValue = formatCellValue($cellObject);
-                echo '<td style="' . $style . '">' . htmlspecialchars($formattedValue) . '</td>';
+                echo '<td style="' . $style . '">' . formatCellValue($cellObject) . '</td>';
             }
         }
         echo '</tr>';
