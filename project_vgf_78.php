@@ -12,13 +12,13 @@ try {
     $spreadsheet = IOFactory::load($inputFileName);
     $sheet = $spreadsheet->getActiveSheet();
 
-    // Chercher le tableau par son nom
+    // Trouver le tableau par son nom
     $table = null;
     foreach ($spreadsheet->getSheetNames() as $sheetName) {
         $spreadsheet->setActiveSheetIndexByName($sheetName);
         $sheet = $spreadsheet->getActiveSheet();
-        $sheetTables = $sheet->getTableCollection();
-        foreach ($sheetTables as $tbl) {
+        $tableCollection = $sheet->getTableCollection();
+        foreach ($tableCollection as $tbl) {
             if ($tbl->getName() === $tableName) {
                 $table = $tbl;
                 break 2;
@@ -112,7 +112,7 @@ try {
     $header = true;
     foreach ($tableData as $rowNum => $row) {
         echo '<tr>';
-        foreach ($row as $col => $cell) {
+        foreach ($row as $col => $cellValue) {
             $cellCoordinate = $col . $rowNum;
             $cellObject = $sheet->getCell($cellCoordinate);
             $style = getCellStyle($cellObject);
@@ -124,7 +124,7 @@ try {
             }
         }
         echo '</tr>';
-        $header = false; // Pour ne pas afficher la première ligne comme entête après la première itération
+        $header = false; // Pour ne pas afficher la première ligne comme en-tête après la première itération
     }
 
     echo '</table>
