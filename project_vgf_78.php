@@ -5,9 +5,12 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 
 $inputFileName = 'C:/Users/csoquet.NIKITA0/Documents/GitHub/map_competitor/document/projet_vapo_game_food_78.xlsx'; // Chemin vers votre fichier Excel
 
+$sheetIndex = isset($_GET['sheet']) ? intval($_GET['sheet']) : 0;
+
 try {
     // Charger le fichier Excel
     $spreadsheet = IOFactory::load($inputFileName);
+    $spreadsheet->setActiveSheetIndex($sheetIndex);
     $sheet = $spreadsheet->getActiveSheet();
     $sheetData = $sheet->toArray(null, true, true, true);
 
@@ -33,7 +36,7 @@ try {
         </style>
     </head>
     <body>
-        <h1>Contenu du Fichier Excel</h1>
+        <h1>Contenu de la feuille: ' . htmlspecialchars($sheet->getTitle()) . '</h1>
         <table>';
     
     // Afficher les données du fichier Excel dans une table HTML
@@ -48,7 +51,7 @@ try {
     </body>
     </html>';
 
-} catch(Exception $e) {
+} catch (Exception $e) {
     die('Erreur de chargement du fichier "' . pathinfo($inputFileName, PATHINFO_BASENAME) 
         . '": ' . $e->getMessage());
 }
