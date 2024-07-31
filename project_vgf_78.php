@@ -85,21 +85,28 @@ try {
                 width: 100%;
                 border-collapse: collapse;
                 margin-bottom: 20px;
-                background-color: #FFFFFF; /* Assurer que le fond est toujours blanc */
             }
             table, th, td {
-                border: 1px solid black;
+                border: 1px solid black; /* Bordures visibles */
             }
             th, td {
                 padding: 8px;
                 text-align: left;
-                background-color: #FFFFFF; /* Assurer que le fond est toujours blanc */
-                color: #000000; /* Assurer que le texte est noir */
+                background-color: #ffffff; /* Fond blanc pour le mode clair */
+                color: #000000; /* Texte noir pour le mode clair */
             }
             .header {
                 background-color: #007BFF; /* Bleu pour les en-têtes */
                 color: white;
                 font-weight: bold;
+            }
+            .dark-theme table {
+                background-color: #1a395c; /* Fond pour les tableaux en mode sombre */
+            }
+            .dark-theme th, .dark-theme td {
+                background-color: #1a395c; /* Fond sombre pour les cellules en mode sombre */
+                color: #ffffff; /* Texte blanc pour le mode sombre */
+                border: 1px solid #ffffff; /* Bordures blanches pour le mode sombre */
             }
         </style>
     </head>
