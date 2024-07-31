@@ -99,10 +99,16 @@ try {
     // Fonction pour formater les nombres
     function formatCellValue($cell) {
         $value = $cell->getCalculatedValue();
-        $style = $cell->getStyle()->getNumberFormat()->getFormatCode();
-        
-        if (preg_match('/^€/', $style)) {
-            // Format "comptabilité" ou monétaire avec €
+        $format = $cell->getStyle()->getNumberFormat()->getFormatCode();
+
+        // Convertir la valeur en nombre si ce n'est pas déjà fait
+        if (is_string($value)) {
+            $value = floatval($value);
+        }
+
+        // Appliquer le format de nombre
+        if (preg_match('/^\s*[$€]/', $format)) {
+            // Format monétaire
             return '€' . number_format($value, 2, ',', ' ');
         } else {
             // Format numérique par défaut
