@@ -10,7 +10,7 @@ class ExcelTableRenderer {
 
         // Couleur de fond
         $fill = $styleArray->getFill()->getStartColor()->getRGB();
-        if ($fill) {
+        if ($fill != '000000') { // Ne pas appliquer le noir par défaut
             $style .= 'background-color: #' . $fill . ';';
         }
 
