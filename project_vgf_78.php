@@ -81,7 +81,7 @@ try {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Financial estimate</title>
+        <title>Financial Estimate</title>
         <style>
             table {
                 width: 100%;
@@ -96,7 +96,15 @@ try {
                 text-align: left;
             }
             .header {
+                background-color: #007BFF; /* Bleu pour les en-têtes */
+                color: white;
                 font-weight: bold;
+            }
+            .odd-row {
+                background-color: white; /* Blanc pour les lignes impaires */
+            }
+            .even-row {
+                background-color: #f2f2f2; /* Gris clair pour les lignes paires */
             }
         </style>
     </head>
@@ -118,8 +126,10 @@ try {
 
             // Afficher les noms des colonnes
             $header = true;
+            $rowIndex = 0;
             foreach ($tableData as $rowNum => $row) {
-                echo '<tr>';
+                $rowClass = $header ? 'header' : ($rowIndex % 2 == 0 ? 'even-row' : 'odd-row');
+                echo '<tr class="' . $rowClass . '">';
                 foreach ($row as $col => $cellValue) {
                     $cellCoordinate = $col . $rowNum;
                     $cellObject = $sheet->getCell($cellCoordinate);
@@ -133,6 +143,7 @@ try {
                 }
                 echo '</tr>';
                 $header = false; // Pour ne pas afficher la première ligne comme en-tête après la première itération
+                $rowIndex++;
             }
 
             echo '</table>';
