@@ -2,7 +2,7 @@
 require 'vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
-use PhpOffice\PhpSpreadsheet\Worksheet\Table;
+use PhpOffice\PhpSpreadsheet\Worksheet\Table\Table;
 
 $inputFileName = 'C:/Users/csoquet.NIKITA0/Documents/GitHub/map_competitor/document/projet_vapo_game_food_78.xlsx'; // Chemin vers votre fichier Excel
 
@@ -70,16 +70,38 @@ try {
     <body>
         <h1>Contenu du Tableau: ' . htmlspecialchars($tableName) . '</h1>
         <table>';
-    
-    // Afficher les données du tableau dans une table HTML
+
+    // Fonction pour obtenir le style de la cellule
+    function getCellStyle($cell) {
+        $style = '';
+        $fill = $cell->getStyle()->getFill();
+        $color = $fill->getStartColor()->getRGB();
+        if ($color) {
+            $style .= 'background-color: #' . $color . ';';
+        }
+
+        $border = $cell->getStyle()->getBorders();
+        $borderStyle = $border->getAllBorders()->getBorderStyle();
+        if ($borderStyle) {
+            $style .= 'border: ' . $borderStyle . ' 1px solid black;';
+        }
+
+        return $style;
+    }
+
+    // Afficher les données du tableau avec mise en forme
     foreach ($tableData as $rowNum => $row) {
         echo '<tr>';
         foreach ($row as $col => $cell) {
+            $cellCoordinate = $col . $rowNum;
+            $cellObject = $sheet->getCell($cellCoordinate);
+            $style = getCellStyle($cellObject);
             $calculatedValue = $calculatedData[$rowNum][$col];
-            echo '<td>' . htmlspecialchars($calculatedValue) . '</td>';
+            echo '<td style="' . $style . '">' . htmlspecialchars($calculatedValue) . '</td>';
         }
         echo '</tr>';
     }
+
     echo '</table>
     </body>
     </html>';
