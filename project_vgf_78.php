@@ -73,6 +73,14 @@ try {
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Financial Estimate</title>
         <style>
+            body.light-theme {
+                background-color: #ffffff;
+                color: #000000;
+            }
+            body.dark-theme {
+                background-color: #121212;
+                color: #ffffff;
+            }
             table {
                 width: 100%;
                 border-collapse: collapse;
@@ -94,7 +102,6 @@ try {
                 font-weight: bold;
             }
         </style>
-
     </head>
     <body>
         <h1>Présentation des estimations financières</h1>';
@@ -136,7 +143,25 @@ try {
         }
     }
 
-    echo '</body></html>';
+    echo '
+        <script>
+            // Vérifie le thème stocké et applique le thème correspondant
+            document.addEventListener("DOMContentLoaded", () => {
+                const darkTheme = localStorage.getItem("dark-theme") === "true";
+                document.body.classList.toggle("dark-theme", darkTheme);
+                document.body.classList.toggle("light-theme", !darkTheme);
+            });
+
+            // Écouter les modifications de localStorage pour détecter les changements de thème
+            window.addEventListener("storage", (event) => {
+                if (event.key === "dark-theme") {
+                    const darkTheme = event.newValue === "true";
+                    document.body.classList.toggle("dark-theme", darkTheme);
+                    document.body.classList.toggle("light-theme", !darkTheme);
+                }
+            });
+        </script>
+    </body></html>';
 
 } catch (Exception $e) {
     die('Erreur de chargement du fichier "' . pathinfo($inputFileName, PATHINFO_BASENAME) 
