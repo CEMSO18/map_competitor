@@ -2,17 +2,39 @@
 require 'vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\NamedRange;
+use PhpOffice\PhpSpreadsheet\Worksheet\Table\Table;
 
 $inputFileName = 'C:/Users/csoquet.NIKITA0/Documents/GitHub/map_competitor/document/projet_vapo_game_food_78.xlsx'; // Chemin vers votre fichier Excel
 
-$sheetIndex = isset($_GET['sheet']) ? intval($_GET['sheet']) : 0;
+$tableName = isset($_GET['table']) ? $_GET['table'] : '';
 
 try {
     // Charger le fichier Excel
     $spreadsheet = IOFactory::load($inputFileName);
-    $spreadsheet->setActiveSheetIndex($sheetIndex);
     $sheet = $spreadsheet->getActiveSheet();
-    $sheetData = $sheet->toArray(null, true, true, true);
+
+    // Chercher le tableau par son nom
+    $table = null;
+    foreach ($spreadsheet->getSheetNames() as $sheetName) {
+        $spreadsheet->setActiveSheetIndexByName($sheetName);
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheetTables = $sheet->getTableCollection();
+        foreach ($sheetTables as $tbl) {
+            if ($tbl->getName() === $tableName) {
+                $table = $tbl;
+                break 2;
+            }
+        }
+    }
+
+    if ($table === null) {
+        throw new Exception('Tableau non trouvé.');
+    }
+
+    // Récupérer les données du tableau
+    $range = $table->getRange();
+    $tableData = $sheet->rangeToArray($range, null, true, true, true);
 
     // Générer du HTML
     echo '<!DOCTYPE html>
@@ -20,7 +42,7 @@ try {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Afficher le contenu Excel</title>
+        <title>Afficher le contenu du tableau</title>
         <style>
             table {
                 width: 100%;
@@ -36,11 +58,11 @@ try {
         </style>
     </head>
     <body>
-        <h1>Contenu de la feuille: ' . htmlspecialchars($sheet->getTitle()) . '</h1>
+        <h1>Contenu du Tableau: ' . htmlspecialchars($tableName) . '</h1>
         <table>';
     
-    // Afficher les données du fichier Excel dans une table HTML
-    foreach ($sheetData as $row) {
+    // Afficher les données du tableau dans une table HTML
+    foreach ($tableData as $row) {
         echo '<tr>';
         foreach ($row as $cell) {
             echo '<td>' . htmlspecialchars($cell) . '</td>';
