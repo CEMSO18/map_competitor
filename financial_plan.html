@@ -18,25 +18,32 @@
             background-color: #000000;
             color: #ffffff;
         }
-        h2, h3 {
+        iframe {
+            width: 100%;
+            height: 600px;
+            border: none;
+        }
+        .download-button {
+            display: block;
             margin-top: 20px;
-        }
-        p {
-            margin-bottom: 10px;
-        }
-        a {
-            color: #007bff; /* couleur bleue pour les liens */
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-align: center;
             text-decoration: none;
-            cursor: pointer;
+            border-radius: 5px;
         }
-        a:hover {
-            text-decoration: underline;
+        .download-button:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
 <body>
-        <h1>Document</h1>
-    <embed src="C:\Users\csoquet.NIKITA0\Documents\GitHub\map_competitor\document\plan_financement_the_gentlemens.pdf" type="application/pdf" width="100%" height="600px" />
+    <h1>Plan de Financement - The Gentlemen's</h1>
+
+    <iframe src="document/plan_financement_the_gentlemens.pdf"></iframe>
+
+    <a href="document/plan_financement_the_gentlemens.pdf" class="download-button" download>Télécharger le document</a>
    
     <script>
         // Vérifie le thème stocké et applique le thème correspondant
