@@ -44,27 +44,8 @@ try {
             .even-row {
                 background-color: #f2f2f2;
             }
-            .dark-theme {
-                background-color: #1a395c;
-                color: white;
-            }
         </style>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <script>
-            // Vérifie le thème stocké et applique le thème correspondant
-            document.addEventListener("DOMContentLoaded", () => {
-                const darkTheme = localStorage.getItem("dark-theme") === "true";
-                document.body.classList.toggle("dark-theme", darkTheme);
-            });
-
-            // Écouter les modifications de localStorage pour détecter les changements de thème
-            window.addEventListener("storage", (event) => {
-                if (event.key === "dark-theme") {
-                    const darkTheme = event.newValue === "true";
-                    document.body.classList.toggle("dark-theme", darkTheme);
-                }
-            });
-
             function generateChart(id, labels, data, title) {
                 new Chart(document.getElementById(id), {
                     type: "bar",
