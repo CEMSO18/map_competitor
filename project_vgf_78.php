@@ -101,7 +101,10 @@ try {
                 font-weight: bold;
             }
             .dark-theme table {
+                padding: 8px;
+                text-align: left;
                 background-color: #1a395c; /* Fond pour les tableaux en mode sombre */
+                color: #ffffff; /* Texte blanc pour le mode sombre */
             }
             .dark-theme th, .dark-theme td {
                 background-color: #1a395c; /* Fond sombre pour les cellules en mode sombre */
