@@ -109,7 +109,6 @@ try {
             .dark-theme th, .dark-theme td {
                 background-color: #1a395c; /* Fond sombre pour les cellules en mode sombre */
                 color: #ffffff; /* Texte blanc pour le mode sombre */
-                border: 1px solid white; /* Bordures visibles */
             }
         </style>
     </head>
