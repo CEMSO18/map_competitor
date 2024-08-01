@@ -79,21 +79,21 @@ try {
         $spreadsheet->setActiveSheetIndexByName($sheetName);
         $sheet = $spreadsheet->getActiveSheet();
 
-        // Parcourir toutes les données du graphique de la feuille
-        foreach ($sheet->getDrawingCollection() as $drawing) {
-            if ($drawing instanceof \PhpOffice\PhpSpreadsheet\Chart\Chart) {
-                $chart = $drawing;
+        // Vérifier s'il y a des graphiques dans la feuille
+        if ($sheet->getChartCollection()->count() > 0) {
+            foreach ($sheet->getChartCollection() as $chart) {
                 $chartId++;
                 $title = $chart->getTitle()->getCaption();
                 $labels = [];
                 $data = [];
-                
+
+                // Extraire les données du graphique
                 foreach ($chart->getPlotArea()->getPlotGroup() as $plotGroup) {
                     foreach ($plotGroup->getPlotCategoryValues() as $category) {
-                        $labels[] = $category;
+                        $labels[] = $category->getLabel();
                     }
                     foreach ($plotGroup->getPlotValues() as $value) {
-                        $data[] = $value;
+                        $data[] = $value->getLabel();
                     }
                 }
 
