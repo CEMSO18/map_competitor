@@ -34,7 +34,7 @@ class ExcelTableRenderer {
         if ($font->getUnderline() !== \PhpOffice\PhpSpreadsheet\Style\Font::UNDERLINE_NONE) {
             $style .= 'text-decoration: underline;';
         }
-        $style .= 'color: #000000;'; // Assurer que le texte est noir
+        #$style .= 'color: #000000;'; // Assurer que le texte est noir
 
         return $style;
     }
