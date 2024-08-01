@@ -2,10 +2,7 @@
 require 'vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
-use Amenadiel\JpGraph\Graph;
-use Amenadiel\JpGraph\Plot;
 
-// Chemin vers votre fichier Excel
 $inputFileName = 'C:/Users/csoquet.NIKITA0/Documents/GitHub/map_competitor/document/projet_vapo_game_food_78.xlsx';
 
 try {
@@ -23,10 +20,6 @@ try {
             body {
                 background-color: white;
                 color: black;
-            }
-            .dark-theme {
-                background-color: #1a395c;
-                color: white;
             }
             table {
                 width: 100%;
@@ -51,7 +44,12 @@ try {
             .even-row {
                 background-color: #f2f2f2;
             }
+            .dark-theme {
+                background-color: #1a395c;
+                color: white;
+            }
         </style>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script>
             // Vérifie le thème stocké et applique le thème correspondant
             document.addEventListener("DOMContentLoaded", () => {
@@ -66,49 +64,69 @@ try {
                     document.body.classList.toggle("dark-theme", darkTheme);
                 }
             });
+
+            function generateChart(id, labels, data, title) {
+                new Chart(document.getElementById(id), {
+                    type: "bar",
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: title,
+                            data: data,
+                            backgroundColor: "rgba(75, 192, 192, 0.2)",
+                            borderColor: "rgba(75, 192, 192, 1)",
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            }
         </script>
     </head>
     <body>
         <h1>Graphiques Excel</h1>';
 
     // Parcourir toutes les feuilles
+    $chartId = 0;
     foreach ($spreadsheet->getSheetNames() as $sheetName) {
         $spreadsheet->setActiveSheetIndexByName($sheetName);
         $sheet = $spreadsheet->getActiveSheet();
 
-        // Parcourir tous les graphiques de la feuille
-        foreach ($sheet->getChartCollection() as $chart) {
-            // Récupérer les données du graphique
-            $series = $chart->getPlotArea()->getPlotGroup()[0]->getPlotSeries();
-            $categories = $series[0]->getPlotCategoryValues();
-            $values = $series[0]->getPlotValues();
+        // Parcourir toutes les données du graphique de la feuille
+        foreach ($sheet->getDrawingCollection() as $drawing) {
+            if ($drawing instanceof \PhpOffice\PhpSpreadsheet\Chart\Chart) {
+                $chart = $drawing;
+                $chartId++;
+                $title = $chart->getTitle()->getCaption();
+                $labels = [];
+                $data = [];
+                
+                foreach ($chart->getPlotArea()->getPlotGroup() as $plotGroup) {
+                    foreach ($plotGroup->getPlotCategoryValues() as $category) {
+                        $labels[] = $category;
+                    }
+                    foreach ($plotGroup->getPlotValues() as $value) {
+                        $data[] = $value;
+                    }
+                }
 
-            // Générer le graphique avec jpgraph
-            $graph = new Graph\Graph(700, 500);
-            $graph->SetScale('textlin');
-
-            $barplot = new Plot\BarPlot($values);
-            $graph->Add($barplot);
-
-            $graph->title->Set($chart->getTitle()->getCaption());
-            $graph->xaxis->title->Set('Catégories');
-            $graph->yaxis->title->Set('Valeurs');
-            $graph->xaxis->SetTickLabels($categories);
-
-            // Sauvegarder le graphique en tant qu'image
-            $imagePath = 'graph_' . $sheetName . '.png';
-            $graph->Stroke($imagePath);
-
-            // Afficher le graphique
-            echo '<h2>' . htmlspecialchars($chart->getTitle()->getCaption()) . '</h2>';
-            echo '<img src="' . $imagePath . '" alt="Graphique Excel">';
+                // Afficher le graphique
+                echo '<h2>' . htmlspecialchars($title) . '</h2>';
+                echo '<canvas id="chart' . $chartId . '" width="400" height="200"></canvas>';
+                echo '<script>generateChart("chart' . $chartId . '", ' . json_encode($labels) . ', ' . json_encode($data) . ', "' . htmlspecialchars($title) . '");</script>';
+            }
         }
     }
 
     echo '</body></html>';
 
 } catch (Exception $e) {
-    die('Erreur de chargement du fichier "' . pathinfo($inputFileName, PATHINFO_BASENAME) 
-        . '": ' . $e->getMessage());
+    die('Erreur de chargement du fichier "' . pathinfo($inputFileName, PATHINFO_BASENAME) . '": ' . $e->getMessage());
 }
 ?>
